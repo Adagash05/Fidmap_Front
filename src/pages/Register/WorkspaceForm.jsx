@@ -1,5 +1,3 @@
-import { Compass } from "lucide-react";
-
 import ErrorBanner from "../ErrorBanner";
 
 const WorkspaceForm = ({
@@ -14,7 +12,7 @@ const WorkspaceForm = ({
     <div className="fm-auth-page">
       <div className="fm-brand fm-auth-brand">
         <div className="fm-brand-mark">
-          <Compass size={18} />
+          <img src="/logo.svg" alt="FIDMAP" />
         </div>
         <div className="fm-brand-name fm-display">fidmap</div>
       </div>

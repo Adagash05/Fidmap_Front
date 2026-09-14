@@ -395,25 +395,30 @@ export const changelog = {
 };
 
 /* ---------------------------------- billing ----------------------------------- */
-// Contract verified against BillingController/BillingService directly —
-// these responses are NOT wrapped in the usual {success,message,data}
-// envelope (raw SubscriptionResponse / Long / CheckoutResponse / 204), and
-// checkout/cancel take query params, not a JSON body. request() already
-// passes raw payloads through unchanged when there's no "data" key, so no
-// special-casing is needed here.
+// Contract verified directly against the actual Polar-based backend
+// (BillingController/BillingService/PolarService, payment/billing +
+// payment/polar packages) — these responses are NOT wrapped in the usual
+// {success,message,data} envelope (raw SubscriptionResponse / Long /
+// CheckoutResponse / 204), and checkout/cancel/changePlan all take query
+// params, not a JSON body. request() already passes raw payloads through
+// unchanged when there's no "data" key, so no special-casing is needed
+// here.
 //
-// Known gaps in the current backend (see BACKEND_FIXES.md):
-// - No yearly pricing exists at all — PaddleConfig.Prices only has one
-//   price per plan (explicitly commented "Recurring monthly"), and
-//   checkout takes no interval param. There is no way to actually charge
-//   yearly right now.
-// - getSubscription/getTrialDaysRemaining/cancelSubscription never call
-//   WorkspaceAuthorizationService.requireBillingAccess — only checkout
-//   does. Any authenticated staff user (any workspace, any role) can
-//   currently view or cancel any other workspace's subscription by UUID.
-// - requireBillingAccess allows OWNER *or* ADMIN; this frontend gates the
-//   Subscription tab to OWNER only per what was asked for, so this is a
-//   (harmless, permissive) mismatch worth knowing about.
+// Payment provider: Polar (migrated from Paddle). The backend's
+// BillingService/PolarService own all provider credentials, webhook
+// handling, and checkout-session creation — this frontend never talks to
+// Polar directly, only to these FIDMAP endpoints. See utils/checkout.js
+// for how the returned checkout URL is used, and note the backend's
+// checkout success/return URLs are hardcoded server-side to
+// /billing/success and /settings/billing respectively (see App.jsx).
+//
+// Verified as of this backend: getSubscription/getTrialDaysRemaining/
+// cancelSubscription/changePlan/createCheckout all call the same
+// OWNER-only requireBillingAccess check consistently; getEntitlements
+// uses the looser requireWorkspaceAccess (any staff member of the
+// workspace), matching this frontend gating Subscription to OWNER only
+// while Entitlements-derived UI (board/team/roadmap/changelog limits)
+// works for any staff role.
 export const billing = {
   getSubscription: (workspaceId) =>
     request(`/api/billing/subscription?workspaceId=${workspaceId}`, {
@@ -438,6 +443,10 @@ export const billing = {
   // plan must be one of the backend's actual BillingPlan enum values:
   // STARTUP_MONTHLY | STARTUP_YEARLY | BUSINESS_MONTHLY | BUSINESS_YEARLY |
   // LIFETIME. See constants/pricing.js for the UI-key -> BillingPlan map.
+  // Response is a CheckoutResponse containing a Polar checkout URL
+  // (checkoutUrl, verified against CheckoutResponse.java) that the
+  // frontend opens as an embedded/in-page checkout — see
+  // utils/checkout.js.
   createCheckout: (workspaceId, plan) =>
     request(
       `/api/billing/checkout?plan=${encodeURIComponent(plan)}&workspaceId=${workspaceId}`,
@@ -445,12 +454,17 @@ export const billing = {
     ),
 
   // Changes an EXISTING active recurring (Startup/Business) subscription to
-  // a different recurring plan via Paddle — no new checkout/subscription is
-  // created. The backend does not update the local plan synchronously; it
-  // calls Paddle and waits for Paddle's webhook to confirm the change, so
-  // callers should re-fetch getSubscription() afterward rather than assume
-  // the new plan is active. Not valid for LIFETIME (a one-time purchase,
-  // not a Paddle subscription) or for non-ACTIVE statuses.
+  // a different recurring plan via the payment provider — no new
+  // checkout/subscription is created. The backend does not update the
+  // local plan synchronously; it updates the provider subscription and
+  // waits for the provider's webhook to confirm the change, so callers
+  // should re-fetch getSubscription() afterward rather than assume the
+  // new plan is active. Rejected by the backend for: LIFETIME as either
+  // the current or target plan, a non-ACTIVE current status, the same
+  // plan as already active, or a subscription already scheduled for
+  // cancellation (see SettingsSubscription.jsx's canChangePlan/
+  // pendingCancellation, which check these client-side too so the button
+  // reflects it instead of letting the click fail server-side).
   changePlan: (workspaceId, plan) =>
     request(
       `/api/billing/subscription/plan?workspaceId=${workspaceId}&plan=${encodeURIComponent(plan)}`,

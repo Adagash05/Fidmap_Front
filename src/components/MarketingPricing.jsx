@@ -15,9 +15,9 @@ import { PLANS, TRIAL_DAYS, yearlySavings } from "../constants/pricing";
  * Lifetime -> /register?plan=lifetime
  *
  * MultiStepForm reads plan + interval after signup:
- * - Startup: keep the backend-created Startup trial, no Paddle checkout
- * - Business: open Paddle checkout for BUSINESS_MONTHLY/BUSINESS_YEARLY
- * - Lifetime: open Paddle Lifetime checkout
+ * - Startup: keep the backend-created Startup trial, no checkout
+ * - Business: open checkout for BUSINESS_MONTHLY/BUSINESS_YEARLY
+ * - Lifetime: open Lifetime checkout
  */
 const MarketingPricing = ({ id }) => {
   const [interval, setIntervalValue] = useState("monthly");

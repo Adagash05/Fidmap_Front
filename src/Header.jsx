@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { Compass, LogIn, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { LogIn, LogOut, Settings as SettingsIcon } from "lucide-react";
 
 import LoginModal from "./components/LoginModal";
 import { boards as boardsApi } from "./components/Api.js";
@@ -67,7 +67,7 @@ const Header = () => {
       <header className="fm-header">
         <Link to="/" className="fm-brand" style={{ textDecoration: "none" }}>
           <div className="fm-brand-mark">
-            <Compass size={18} />
+            <img src="/logo.svg" alt="FIDMAP" />
           </div>
 
           <div>

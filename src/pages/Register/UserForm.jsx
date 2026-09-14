@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Compass } from "lucide-react";
 
 const UserForm = ({ formData, handleChange, nextStep }) => {
   return (
@@ -10,7 +9,7 @@ const UserForm = ({ formData, handleChange, nextStep }) => {
         style={{ textDecoration: "none" }}
       >
         <div className="fm-brand-mark">
-          <Compass size={18} />
+          <img src="/logo.svg" alt="FIDMAP" />
         </div>
         <div className="fm-brand-name fm-display">fidmap</div>
       </Link>

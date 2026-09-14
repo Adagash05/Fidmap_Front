@@ -5,16 +5,16 @@ import UserForm from "./UserForm";
 import WorkspaceForm from "./WorkspaceForm";
 import { useAuth } from "../../hooks/useAuth";
 import { billing as billingApi } from "../../components/Api";
-import { openPaddleCheckout } from "../../utils/paddle";
+import { openEmbeddedCheckout } from "../../utils/checkout";
 
 // The ?plan= URL param uses the same simple keys as MarketingPricing
 // (plan.key.toLowerCase() — "startup" | "business" | "lifetime"), and for
 // recurring plans an ?interval= of "monthly" | "yearly" — not the
 // backend's full BillingPlan enum values.
 //
-// Startup never triggers Paddle checkout here, regardless of interval —
-// a new Startup signup keeps the backend-created local Startup trial and
-// goes straight to the dashboard. Business/Lifetime resolve to the actual
+// Startup never triggers checkout here, regardless of interval — a new
+// Startup signup keeps the backend-created local Startup trial and goes
+// straight to the dashboard. Business/Lifetime resolve to the actual
 // BillingPlan enum value the checkout endpoint expects, defaulting a
 // missing/unrecognized interval to monthly. Missing/unrecognized plan
 // falls back to normal registration (no checkout) — this param only
@@ -83,17 +83,17 @@ const MultiStepForm = () => {
             planForCheckout,
           );
 
-          await openPaddleCheckout({
-            paddlePriceId: checkout.paddlePriceId,
-            paddleClientToken: checkout.paddleClientToken,
-            environment: checkout.environment,
-            workspaceId: result.workspaceId,
-            successUrl: `${window.location.origin}/dashboard`,
-          });
+          // Embedded (in-page) checkout — stays on this screen instead of
+          // navigating away. Whether the visitor completes payment or
+          // just closes it, either way we continue into the app the same
+          // way a closed Paddle overlay used to just fall through
+          // afterward; the webhook is the real source of truth regardless.
+          await openEmbeddedCheckout(checkout.checkoutUrl).done;
         } catch {
-          // Paddle's webhook is the real source of truth regardless — if
-          // checkout couldn't open, the workspace is still on its normal
-          // trial and the owner can start checkout again from Settings.
+          // The provider's webhook is the real source of truth
+          // regardless — if checkout couldn't be created/opened, the
+          // workspace is still on its normal trial and the owner can
+          // start checkout again from Settings.
         }
       }
 

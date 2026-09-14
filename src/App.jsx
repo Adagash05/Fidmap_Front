@@ -32,6 +32,10 @@ import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
  *   /roadmap     staff roadmap mgmt    — protected
  *   /changelog   staff changelog mgmt  — protected
  *   /settings    staff settings        — protected
+ *   /billing/success, /settings/billing   the two URLs the backend's
+ *      Polar checkout session is hardcoded to send the browser back to
+ *      (BillingService: successUrl/returnUrl) — both just redirect into
+ *      /settings, which already exists                — protected
  *   /board/:boardId   public feedback experience for one board (no auth)
  *   /terms, /privacy, /refund-policy   public legal pages (no auth)
  *
@@ -93,6 +97,12 @@ export default function App() {
           <Route path="/roadmap" element={<RoadmapView />} />
           <Route path="/changelog" element={<ChangelogView />} />
           <Route path="/settings" element={<Settings />} />
+          {/* Backend-hardcoded Polar checkout return URLs (BillingService
+              successUrl/returnUrl) — neither is a real page, both just
+              land back on Settings, which re-fetches subscription state
+              itself. */}
+          <Route path="/billing/success" element={<Navigate to="/settings" replace />} />
+          <Route path="/settings/billing" element={<Navigate to="/settings" replace />} />
         </Route>
       </Routes>
     );
@@ -124,6 +134,12 @@ export default function App() {
         <Route path="/roadmap" element={<RoadmapView />} />
         <Route path="/changelog" element={<ChangelogView />} />
         <Route path="/settings" element={<Settings />} />
+        {/* Backend-hardcoded Polar checkout return URLs (BillingService
+            successUrl/returnUrl) — neither is a real page, both just
+            land back on Settings, which re-fetches subscription state
+            itself. */}
+        <Route path="/billing/success" element={<Navigate to="/settings" replace />} />
+        <Route path="/settings/billing" element={<Navigate to="/settings" replace />} />
       </Route>
     </Routes>
   );

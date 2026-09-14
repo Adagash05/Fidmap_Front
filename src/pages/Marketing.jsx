@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  Compass,
   MessageSquare,
   ThumbsUp,
   Map,
@@ -22,7 +21,7 @@ const Marketing = () => {
       <header className="fm-mkt-nav">
         <div className="fm-brand">
           <div className="fm-brand-mark">
-            <Compass size={18} />
+            <img src="/logo.svg" alt="FIDMAP" />
           </div>
           <div className="fm-brand-name fm-display">fidmap</div>
         </div>
@@ -149,7 +148,7 @@ const Marketing = () => {
       <footer className="fm-mkt-footer">
         <div className="fm-brand">
           <div className="fm-brand-mark">
-            <Compass size={16} />
+            <img src="/logo.svg" alt="FIDMAP" />
           </div>
           <div className="fm-brand-name fm-display">fidmap</div>
         </div>

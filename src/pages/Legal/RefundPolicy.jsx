@@ -21,7 +21,7 @@ const RefundPolicy = () => (
     <h2>2. Startup and Business Subscriptions</h2>
     <p>
       Startup and Business plans are billed in advance, monthly or
-      yearly, through Paddle. Because you can cancel at any time and your
+      yearly, through Polar. Because you can cancel at any time and your
       access continues until the end of the period you already paid for
       (see "Cancellation" below), we generally do not provide prorated
       refunds for the unused portion of a billing period.
@@ -80,7 +80,7 @@ const RefundPolicy = () => (
 
     <h2>7. Refund Processing</h2>
     <p>
-      Approved refunds are processed by Paddle, our payment provider, back
+      Approved refunds are processed by Polar, our payment provider, back
       to your original payment method. Processing times can vary by
       payment method and bank, typically appearing within a normal
       billing cycle after approval.

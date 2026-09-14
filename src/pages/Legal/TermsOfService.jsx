@@ -151,10 +151,10 @@ const TermsOfService = () => (
 
     <h2>12. Payment Processing</h2>
     <p>
-      Payments are processed by Paddle, our third-party payment provider
+      Payments are processed by Polar, our third-party payment provider
       and merchant of record for subscription and Lifetime purchases. We
       do not directly collect or store your full payment card details.
-      Your purchase is also subject to Paddle's own terms and privacy
+      Your purchase is also subject to Polar's own terms and privacy
       policy.
     </p>
 
@@ -186,7 +186,7 @@ const TermsOfService = () => (
     <h2>16. Third-Party Services</h2>
     <p>
       FIDMAP relies on third-party infrastructure and services, including
-      Paddle for payment processing, to operate. We are not responsible
+      Polar for payment processing, to operate. We are not responsible
       for the acts or omissions of third-party services, though we choose
       providers we believe are reputable.
     </p>

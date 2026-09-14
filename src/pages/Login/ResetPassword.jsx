@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Compass, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 import ErrorBanner from "../ErrorBanner";
 import { auth as authApi, ApiError } from "../../components/Api";
@@ -97,7 +97,7 @@ const ResetPassword = () => {
     <div className="fm-auth-page">
       <Link to="/" className="fm-brand fm-auth-brand" style={{ textDecoration: "none" }}>
         <div className="fm-brand-mark">
-          <Compass size={18} />
+          <img src="/logo.svg" alt="FIDMAP" />
         </div>
         <div className="fm-brand-name fm-display">fidmap</div>
       </Link>

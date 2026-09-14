@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Compass } from "lucide-react";
 
 import ErrorBanner from "../ErrorBanner";
 import { useAuth } from "../../hooks/useAuth";
@@ -42,7 +41,7 @@ const Login = () => {
         style={{ textDecoration: "none" }}
       >
         <div className="fm-brand-mark">
-          <Compass size={18} />
+          <img src="/logo.svg" alt="FIDMAP" />
         </div>
         <div className="fm-brand-name fm-display">fidmap</div>
       </Link>

@@ -113,32 +113,18 @@ public ApiResponse<UserDto> updateOwnProfile(UUID userId, UpdateUserRequest requ
 }
 ```
 
-### 3. No yearly Paddle price configured
+### 3. No yearly price configured — RESOLVED in the current (Polar) backend
 
-`PaddleConfig.Prices` has exactly one price id per plan (commented
-"Recurring monthly" / "One-time") and `BillingController#checkout` takes
-no interval parameter — a yearly checkout cannot be requested at all
-today. The frontend's pricing UI shows yearly figures for comparison but
-disables/labels yearly checkout as unavailable rather than silently
-charging monthly under a yearly label.
+This section originally described a limitation in the old Paddle-based
+backend: only one price id per plan existed, with no way to request
+yearly billing at all. **Verified fixed** in the current backend —
+`PolarConfig.Products` now has all five ids (`startupMonthly`,
+`startupYearly`, `businessMonthly`, `businessYearly`, `lifetime`), and
+`BillingService.getProductId()` switches on the full `BillingPlan` enum
+(which already encodes monthly vs. yearly as separate values, e.g.
+`STARTUP_MONTHLY` / `STARTUP_YEARLY`) rather than taking a separate
+interval parameter. No frontend or backend change needed here.
 
-**Fix** — add yearly price ids and an interval parameter:
-```java
-// PaddleConfig
-public record Prices(
-    String startupMonthly, String startupYearly,
-    String businessMonthly, String businessYearly,
-    String lifetime
-) {}
-```
-```java
-// BillingController
-@PostMapping("/checkout")
-public ResponseEntity<CheckoutResponse> checkout(
-        @RequestParam BillingPlan plan,
-        @RequestParam(defaultValue = "MONTHLY") BillingInterval interval,
-        @RequestParam UUID workspaceId) { ... }
-```
 
 ### 4. `requireBillingAccess` permits ADMIN; product spec wants OWNER-only
 

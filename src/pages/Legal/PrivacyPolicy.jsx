@@ -103,11 +103,11 @@ const PrivacyPolicy = () => (
 
     <h2>4. Payment Processing</h2>
     <p>
-      Subscription and Lifetime purchases are processed by Paddle, our
-      payment provider and merchant of record. Paddle collects and
+      Subscription and Lifetime purchases are processed by Polar, our
+      payment provider and merchant of record. Polar collects and
       processes your payment details directly; we receive limited billing
       information (such as subscription status) needed to manage your
-      account, not your full card details. Paddle's own privacy policy
+      account, not your full card details. Polar's own privacy policy
       governs its handling of your payment information.
     </p>
 

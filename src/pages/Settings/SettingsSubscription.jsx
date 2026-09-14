@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import ErrorBanner from "../ErrorBanner";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { billing as billingApi } from "../../components/Api";
-import { openPaddleCheckout } from "../../utils/paddle";
+import { openEmbeddedCheckout } from "../../utils/checkout";
 import {
   PLAN_LABEL,
   PLANS,
@@ -32,10 +32,9 @@ const formatDate = (iso) =>
     : null;
 
 /*
- * Paddle checkout/subscription changes are asynchronous.
- *
- * The frontend mutation can complete before the corresponding Paddle
- * webhook has updated the backend database.
+ * A billing mutation (checkout, plan change, cancellation) completing on
+ * the FIDMAP backend does not mean the payment provider's webhook has
+ * already updated the backend's subscription record.
  *
  * Therefore, after a billing mutation, poll the backend for a short,
  * bounded period until the expected subscription state is visible.
@@ -121,10 +120,16 @@ const SettingsSubscription = ({ workspaceId }) => {
   // afterward.
   const isMountedRef = useRef(true);
 
+  // Holds the currently-open embedded checkout (if any), so it can be
+  // force-closed if this component unmounts mid-checkout — mirrors
+  // Polar's own documented React cleanup pattern.
+  const checkoutHandleRef = useRef(null);
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      checkoutHandleRef.current?.close();
     };
   }, []);
 
@@ -186,18 +191,19 @@ const SettingsSubscription = ({ workspaceId }) => {
         billingPlan,
       );
 
-      await openPaddleCheckout({
-        paddlePriceId: checkout.paddlePriceId,
-        paddleClientToken: checkout.paddleClientToken,
-        environment: checkout.environment,
-        workspaceId,
-      });
+      // Embedded (in-page) checkout, forced to the light theme — stays on
+      // this screen instead of redirecting away. Whichever way it ends
+      // (payment succeeded or the visitor just closed it), the webhook
+      // remains the actual source of truth, so either way we move on to
+      // polling the backend the same way changePlan/cancel already do.
+      const checkoutHandle = openEmbeddedCheckout(checkout.checkoutUrl);
+      checkoutHandleRef.current = checkoutHandle;
 
-      /*
-       * Checkout completion does not guarantee that the webhook has already
-       * updated the backend. Wait until the backend reflects the expected
-       * plan and status.
-       */
+      await checkoutHandle.done;
+
+      if (!isMountedRef.current) return;
+      checkoutHandleRef.current = null;
+
       const syncResult = await waitForSubscriptionSync(
         () => billingApi.getSubscription(workspaceId),
         setSubscription,
@@ -209,7 +215,7 @@ const SettingsSubscription = ({ workspaceId }) => {
 
       if (syncResult === "timeout" && isMountedRef.current) {
         setSyncNotice(
-          "Your payment went through and is being confirmed. This can take a minute — refresh if your plan doesn't update shortly.",
+          "If you completed payment, it's still being confirmed by our payment provider. This can take a minute — refresh if your plan doesn't update shortly.",
         );
       }
     } catch (e) {
@@ -224,8 +230,8 @@ const SettingsSubscription = ({ workspaceId }) => {
    * Changes an existing ACTIVE recurring subscription to another recurring
    * plan/interval.
    *
-   * The frontend does NOT optimistically change subscription.plan.
-   * Paddle/webhook/backend remain the source of truth.
+   * The frontend does NOT optimistically change subscription.plan. The
+   * webhook/backend remain the source of truth.
    */
   const changePlan = async (billingPlan) => {
     if (mutationInFlightRef.current) return;
@@ -243,7 +249,7 @@ const SettingsSubscription = ({ workspaceId }) => {
       await billingApi.changePlan(workspaceId, billingPlan);
 
       /*
-       * Wait for Paddle's webhook to update the backend.
+       * Wait for the payment provider's webhook to update the backend.
        *
        * Once the backend returns the new plan, setSubscription() updates
        * React state and the page immediately reflects the new plan without
@@ -260,7 +266,7 @@ const SettingsSubscription = ({ workspaceId }) => {
 
       if (syncResult === "timeout" && isMountedRef.current) {
         setSyncNotice(
-          "Your plan change was submitted and is being confirmed by Paddle. This can take a minute — refresh if it doesn't update shortly.",
+          "Your plan change was submitted and is being confirmed by our payment provider. This can take a minute — refresh if it doesn't update shortly.",
         );
       }
     } catch (e) {
@@ -584,11 +590,29 @@ const SettingsSubscription = ({ workspaceId }) => {
 
               const billingPlan = resolveBillingPlan(plan, interval);
 
+              // Backend (BillingService.changePlan) rejects a plan change
+              // on a subscription already scheduled to cancel
+              // ("Subscription is scheduled for cancellation"). Rather
+              // than falling through to startCheckout() in that case —
+              // which would create a second, parallel Polar subscription
+              // instead of a clean plan change — block switching to
+              // another recurring plan entirely until the cancellation
+              // resolves. Lifetime is unaffected: it's always a fresh
+              // one-time checkout regardless of an existing subscription.
+              const pendingCancellation =
+                status === "ACTIVE" &&
+                Boolean(subscription?.cancelAtPeriodEnd) &&
+                !isLifetime;
+
               const canChangePlan =
                 status === "ACTIVE" &&
+                !pendingCancellation &&
                 !isLifetime &&
                 plan.key !== "LIFETIME" &&
                 !isCurrent;
+
+              const blockedByPendingCancellation =
+                pendingCancellation && plan.key !== "LIFETIME" && !isCurrent;
 
               return (
                 <div className="fm-board-card" key={plan.key}>
@@ -669,20 +693,31 @@ const SettingsSubscription = ({ workspaceId }) => {
                         width: "100%",
                         justifyContent: "center",
                       }}
-                      onClick={() =>
-                        canChangePlan
-                          ? changePlan(billingPlan)
-                          : startCheckout(plan)
+                      onClick={() => {
+                        if (blockedByPendingCancellation) return;
+
+                        if (canChangePlan) {
+                          changePlan(billingPlan);
+                        } else {
+                          startCheckout(plan);
+                        }
+                      }}
+                      disabled={busy || blockedByPendingCancellation}
+                      title={
+                        blockedByPendingCancellation
+                          ? "Your current subscription is scheduled to cancel at the end of this billing period. Wait for that to take effect, or contact support."
+                          : undefined
                       }
-                      disabled={busy}
                     >
                       {changingPlan === billingPlan
                         ? "Changing plan…"
                         : checkoutPlan === billingPlan
                           ? "Opening checkout…"
-                          : canChangePlan
-                            ? "Change plan"
-                            : "Choose plan"}
+                          : blockedByPendingCancellation
+                            ? "Cancellation pending"
+                            : canChangePlan
+                              ? "Change plan"
+                              : "Choose plan"}
                     </button>
                   )}
                 </div>

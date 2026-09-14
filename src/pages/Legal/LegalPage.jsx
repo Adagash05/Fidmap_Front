@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Compass } from "lucide-react";
 
 import { LEGAL_LAST_UPDATED } from "../../constants/legal";
 
@@ -24,7 +23,7 @@ const LegalPage = ({ title, pageTitle, children }) => {
       <header className="fm-mkt-nav">
         <Link to="/" className="fm-brand" style={{ textDecoration: "none" }}>
           <div className="fm-brand-mark">
-            <Compass size={18} />
+            <img src="/logo.svg" alt="FIDMAP" />
           </div>
           <div className="fm-brand-name fm-display">fidmap</div>
         </Link>
@@ -50,7 +49,7 @@ const LegalPage = ({ title, pageTitle, children }) => {
       <footer className="fm-mkt-footer">
         <div className="fm-brand">
           <div className="fm-brand-mark">
-            <Compass size={16} />
+            <img src="/logo.svg" alt="FIDMAP" />
           </div>
           <div className="fm-brand-name fm-display">fidmap</div>
         </div>
