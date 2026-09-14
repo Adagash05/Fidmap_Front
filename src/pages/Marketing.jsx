@@ -52,10 +52,12 @@ const Marketing = () => {
 
         <div className="fm-mkt-cta-row">
           <a href="https://app.fidmap.co/register">
-            <ArrowRight size={14} /> Get Started
+            {" "}
+            <ArrowRight size={14} />
+            Get Started
           </a>
 
-          <a href="https://app.fidmap.co/sign-in">Sign In</a>
+          <a href="https://app.fidmap.co/sign-in">Sign in</a>
         </div>
       </section>
 
@@ -147,7 +149,7 @@ const Marketing = () => {
         <p className="fm-mkt-sub">
           Set up your workspace in a couple of minutes.
         </p>
-        <a to="https://app.fidmap.co/register" className="fm-btn-primary">
+        <a href="https://app.fidmap.co/register" className="fm-btn-primary">
           Get started <ArrowRight size={14} />
         </a>
       </section>
