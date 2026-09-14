@@ -36,21 +36,24 @@ const Marketing = () => {
       </header>
 
       <section className="fm-mkt-hero">
-        <div className="fm-mkt-eyebrow fm-mono">Customer feedback, organized</div>
+        <div className="fm-mkt-eyebrow fm-mono">
+          Customer feedback, organized
+        </div>
 
         <h1 className="fm-display fm-mkt-h1">
           Turn customer feedback into your product roadmap.
         </h1>
 
         <p className="fm-mkt-sub">
-          Collect feature requests, let customers vote on what matters, plan
-          it on a public roadmap, and announce what shipped — all in one
-          place, under your own feedback portal.
+          Collect feature requests, let customers vote on what matters, plan it
+          on a public roadmap, and announce what shipped — all in one place,
+          under your own feedback portal.
         </p>
 
         <div className="fm-mkt-cta-row">
           <Link to="/register" className="fm-btn-primary">
-            Get started <ArrowRight size={14} />
+            Get started
+            <ArrowRight size={14} />
           </Link>
           <Link to="/sign-in" className="fm-btn-ghost">
             Sign in
@@ -76,15 +79,17 @@ const Marketing = () => {
       </section>
 
       <section className="fm-mkt-features">
-        <h2 className="fm-display fm-mkt-h2">Everything a feedback loop needs</h2>
+        <h2 className="fm-display fm-mkt-h2">
+          Everything a feedback loop needs
+        </h2>
 
         <div className="fm-mkt-feature-grid">
           <div className="fm-mkt-feature">
             <MessageSquare size={18} />
             <h3>Feedback boards</h3>
             <p>
-              Create as many boards as you need — feature requests, bug
-              reports, general feedback — each with its own feed.
+              Create as many boards as you need — feature requests, bug reports,
+              general feedback — each with its own feed.
             </p>
           </div>
 
@@ -92,8 +97,8 @@ const Marketing = () => {
             <ThumbsUp size={18} />
             <h3>Voting</h3>
             <p>
-              Customers vote on the ideas that matter to them, so you know
-              what to prioritize without guessing.
+              Customers vote on the ideas that matter to them, so you know what
+              to prioritize without guessing.
             </p>
           </div>
 
@@ -101,8 +106,8 @@ const Marketing = () => {
             <MessageSquare size={18} />
             <h3>Comments</h3>
             <p>
-              Every feedback post has a conversation attached, so context
-              never gets lost.
+              Every feedback post has a conversation attached, so context never
+              gets lost.
             </p>
           </div>
 
@@ -119,8 +124,8 @@ const Marketing = () => {
             <Megaphone size={18} />
             <h3>Changelog</h3>
             <p>
-              Announce what you've shipped, so customers can see their
-              feedback turn into real product changes.
+              Announce what you've shipped, so customers can see their feedback
+              turn into real product changes.
             </p>
           </div>
 
@@ -138,8 +143,12 @@ const Marketing = () => {
       <MarketingPricing id="pricing" />
 
       <section className="fm-mkt-final-cta">
-        <h2 className="fm-display fm-mkt-h2">Start collecting feedback today</h2>
-        <p className="fm-mkt-sub">Set up your workspace in a couple of minutes.</p>
+        <h2 className="fm-display fm-mkt-h2">
+          Start collecting feedback today
+        </h2>
+        <p className="fm-mkt-sub">
+          Set up your workspace in a couple of minutes.
+        </p>
         <Link to="/register" className="fm-btn-primary">
           Get started <ArrowRight size={14} />
         </Link>
