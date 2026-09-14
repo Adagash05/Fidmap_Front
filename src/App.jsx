@@ -101,46 +101,37 @@ export default function App() {
               successUrl/returnUrl) — neither is a real page, both just
               land back on Settings, which re-fetches subscription state
               itself. */}
-          <Route path="/billing/success" element={<Navigate to="/settings" replace />} />
-          <Route path="/settings/billing" element={<Navigate to="/settings" replace />} />
+          <Route
+            path="/billing/success"
+            element={<Navigate to="/settings" replace />}
+          />
+          <Route
+            path="/settings/billing"
+            element={<Navigate to="/settings" replace />}
+          />
         </Route>
       </Routes>
     );
   }
 
   // fidmap.co
+  // fidmap.co — MARKETING DOMAIN
   return (
     <Routes>
       <Route path="/" element={<Marketing />} />
 
+      {/* Public workspace */}
       <Route path="/p/:workspaceSlug" element={<PublicPortal />} />
       <Route path="/p/:workspaceSlug/roadmap" element={<PortalRoadmap />} />
       <Route path="/p/:workspaceSlug/changelog" element={<PortalChangelog />} />
 
+      {/* Public board */}
       <Route path="/board/:boardId" element={<Board />} />
 
-      <Route path="/sign-in" element={<Login />} />
-      <Route path="/register" element={<MultiStepForm />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-
+      {/* Legal pages */}
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund-policy" element={<RefundPolicy />} />
-
-      <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<StaffDashboard />} />
-        <Route path="/boards" element={<Boards />} />
-        <Route path="/roadmap" element={<RoadmapView />} />
-        <Route path="/changelog" element={<ChangelogView />} />
-        <Route path="/settings" element={<Settings />} />
-        {/* Backend-hardcoded Polar checkout return URLs (BillingService
-            successUrl/returnUrl) — neither is a real page, both just
-            land back on Settings, which re-fetches subscription state
-            itself. */}
-        <Route path="/billing/success" element={<Navigate to="/settings" replace />} />
-        <Route path="/settings/billing" element={<Navigate to="/settings" replace />} />
-      </Route>
     </Routes>
   );
 }
