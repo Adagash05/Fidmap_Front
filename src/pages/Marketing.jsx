@@ -28,10 +28,10 @@ const Marketing = () => {
 
         <nav className="fm-mkt-nav-links">
           <a href="#pricing">Pricing</a>
-          <Link to="/sign-in">Sign in</Link>
-          <Link to="/register" className="fm-btn-primary">
+          <a href="https://app.fidmap.co/sign-in">Sign in</a>
+          <a href="https://app.fidmap.co/register" className="fm-btn-primary">
             Get started
-          </Link>
+          </a>
         </nav>
       </header>
 
