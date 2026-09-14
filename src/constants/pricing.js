@@ -81,9 +81,16 @@ export const PLANS = [
     // Actual backend BillingPlan value
     plan: "LIFETIME",
 
-    tagline: "One-time payment. No recurring subscription.",
+    tagline: "Pay once. Keep FIDMAP for life. Founding pricing won't last.",
 
-    features: ["Everything in Business", "No recurring billing, ever"],
+    features: [
+      "Everything in Business",
+      "Lifetime access",
+      "All future improvements",
+      "No recurring billing, ever",
+      "Founding customer price: $99",
+      "Lock in $99 before the price increases",
+    ],
   },
 ];
 
