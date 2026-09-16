@@ -9,6 +9,14 @@
 // the 5 real enum values via monthlyPlan/yearlyPlan/plan below — never
 // send "STARTUP" or "BUSINESS" directly to the backend.
 
+// The application domain (registration/sign-in/dashboard/...), separate
+// from the marketing domain this pricing data is displayed on. Used by
+// MarketingPricing's plan CTAs, which must cross from fidmap.co over to
+// app.fidmap.co — a real cross-origin navigation, not a React Router
+// <Link>. Matches the same "https://app.fidmap.co" already hardcoded in
+// Marketing.jsx's own sign-in/register links.
+export const APP_URL = "https://app.fidmap.co";
+
 export const PLAN_LABEL = {
   STARTUP: "Startup",
   BUSINESS: "Business",

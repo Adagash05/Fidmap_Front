@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Check, ArrowRight } from "lucide-react";
 
-import { PLANS, TRIAL_DAYS, yearlySavings } from "../constants/pricing";
+import { PLANS, TRIAL_DAYS, yearlySavings, APP_URL } from "../constants/pricing";
 
 /*
  * Public pricing section for the Marketing page.
  *
  * The selected plan (and, for recurring plans, billing interval) is
- * passed through the registration URL.
+ * passed through the registration URL — on the APPLICATION domain
+ * (app.fidmap.co), not the marketing domain this component itself
+ * renders on. That's a real cross-origin navigation, so these are plain
+ * <a href> tags rather than React Router <Link>s (a same-origin client
+ * -side <Link to="/register..."> would just fail to match any route on
+ * fidmap.co, since /register only exists on app.fidmap.co — see App.jsx).
+ * Matches the same pattern Marketing.jsx's own sign-in/register links
+ * already use.
  *
- * Startup  -> /register?plan=startup&interval=monthly|yearly
- * Business -> /register?plan=business&interval=monthly|yearly
- * Lifetime -> /register?plan=lifetime
+ * Startup  -> https://app.fidmap.co/register?plan=startup&interval=monthly|yearly
+ * Business -> https://app.fidmap.co/register?plan=business&interval=monthly|yearly
+ * Lifetime -> https://app.fidmap.co/register?plan=lifetime
  *
  * MultiStepForm reads plan + interval after signup:
  * - Startup: keep the backend-created Startup trial, no checkout
@@ -70,8 +76,8 @@ const MarketingPricing = ({ id }) => {
 
           const registerUrl =
             plan.key === "LIFETIME"
-              ? `/register?plan=${plan.key.toLowerCase()}`
-              : `/register?plan=${plan.key.toLowerCase()}&interval=${interval}`;
+              ? `${APP_URL}/register?plan=${plan.key.toLowerCase()}`
+              : `${APP_URL}/register?plan=${plan.key.toLowerCase()}&interval=${interval}`;
 
           return (
             <div
@@ -109,7 +115,7 @@ const MarketingPricing = ({ id }) => {
                 ))}
               </ul>
 
-              <Link to={registerUrl} className="fm-btn-primary fm-mkt-plan-cta">
+              <a href={registerUrl} className="fm-btn-primary fm-mkt-plan-cta">
                 {isOneTime
                   ? "Get lifetime access"
                   : isBusiness
@@ -117,7 +123,7 @@ const MarketingPricing = ({ id }) => {
                     : "Start free trial"}
 
                 <ArrowRight size={14} />
-              </Link>
+              </a>
             </div>
           );
         })}

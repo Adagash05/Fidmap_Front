@@ -23,7 +23,7 @@ import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
 /*
  * Routing.
  *
- * MAIN DOMAIN (fidmap.com):
+ * MAIN DOMAIN (fidmap.co):
  *   /            marketing landing page — no board/workspace/feedback data
  *   /sign-in     staff login
  *   /register    staff + workspace registration
@@ -39,7 +39,7 @@ import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
  *   /board/:boardId   public feedback experience for one board (no auth)
  *   /terms, /privacy, /refund-policy   public legal pages (no auth)
  *
- * PUBLIC WORKSPACE PORTAL — {workspaceSlug}.fidmap.com in production
+ * PUBLIC WORKSPACE PORTAL — {workspaceSlug}.fidmap.co in production
  * (VITE_ROOT_DOMAIN configured), /p/:workspaceSlug as the dev/local
  * fallback (see utils/tenant.js):
  *   /                boards list
@@ -48,7 +48,7 @@ import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
  *
  * When a workspace subdomain is detected, the ENTIRE app renders the
  * portal routes at "/" instead of marketing/staff — a public visitor on
- * acme.fidmap.com never sees fidmap.com's marketing page or /sign-in
+ * acme.fidmap.co never sees fidmap.co's marketing page or /sign-in
  * unless they click "Staff sign in" in the header.
  */
 export default function App() {

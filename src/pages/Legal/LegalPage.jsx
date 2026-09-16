@@ -2,9 +2,18 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { LEGAL_LAST_UPDATED } from "../../constants/legal";
+import { APP_URL } from "../../constants/pricing";
 
 /*
- * Shared layout for the three public legal pages (Terms/Privacy/Refund).
+ * Shared layout for the three public legal pages (Terms/Privacy/Refund),
+ * registered on BOTH the marketing domain (fidmap.co/terms) and the app
+ * domain (app.fidmap.co/terms) — see App.jsx. "/" and the other legal
+ * routes exist identically on both domains, so those stay same-origin
+ * <Link>s, but /sign-in and /register only exist on app.fidmap.co, so
+ * those must be real cross-origin links (see MarketingPricing.jsx for
+ * the same reasoning) so they still work when this page is reached via
+ * fidmap.co.
+ *
  * Reuses Marketing.jsx's header/footer markup and the existing
  * .fm-marketing / .fm-mkt-nav / .fm-mkt-footer classes so these pages
  * look like part of the same site rather than a bolted-on doc viewer.
@@ -30,10 +39,10 @@ const LegalPage = ({ title, pageTitle, children }) => {
 
         <nav className="fm-mkt-nav-links">
           <Link to="/">Home</Link>
-          <Link to="/sign-in">Sign in</Link>
-          <Link to="/register" className="fm-btn-primary">
+          <a href={`${APP_URL}/sign-in`}>Sign in</a>
+          <a href={`${APP_URL}/register`} className="fm-btn-primary">
             Get started
-          </Link>
+          </a>
         </nav>
       </header>
 

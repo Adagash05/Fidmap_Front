@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 /*
  * Sub-navigation inside the public portal (Boards / Roadmap / Changelog),
  * scoped to /p/:workspaceSlug/... — distinct from the staff Header tabs,
- * which point at the protected fidmap.com/roadmap etc.
+ * which point at the protected app.fidmap.co/roadmap etc.
  */
 const PortalNav = ({ workspaceSlug, active }) => {
   const tabs = [
