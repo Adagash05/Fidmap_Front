@@ -94,6 +94,8 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<StaffDashboard />} />
           <Route path="/boards" element={<Boards />} />
+          {/* PUBLIC INDIVIDUAL BOARD */}
+          <Route path="/board/:boardId" element={<Board />} />
           <Route path="/roadmap" element={<RoadmapView />} />
           <Route path="/changelog" element={<ChangelogView />} />
           <Route path="/settings" element={<Settings />} />
