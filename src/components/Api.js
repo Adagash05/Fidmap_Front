@@ -1,8 +1,9 @@
 // Talks to the fidmap Spring Boot backend.
 // See BACKEND_FIXES.md for the exact backend changes this contract assumes.
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://api.fidmap.co";
 // VITE_API_BASE_URL=https://api.fidmap.co
+//localhost:8080
 
 export const WORKSPACE_ID = import.meta.env.VITE_WORKSPACE_ID || null;
 
