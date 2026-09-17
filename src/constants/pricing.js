@@ -79,12 +79,12 @@ export const PLANS = [
 
   {
     key: "LIFETIME",
-    name: "Lifetime",
+    name: "Lifetime Deal",
 
     // Lifetime is a one-time purchase.
     monthly: null,
     yearly: null,
-    price: 99,
+    price: 49,
 
     // Actual backend BillingPlan value
     plan: "LIFETIME",
@@ -96,8 +96,8 @@ export const PLANS = [
       "Lifetime access",
       "All future improvements",
       "No recurring billing, ever",
-      "Founding customer price: $99",
-      "Lock in $99 before the price increases",
+      "Founding customer price: $49",
+      "Lock in $49 before the price increases",
     ],
   },
 ];
