@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import ErrorBanner from "../ErrorBanner";
 import { auth as authApi } from "../../components/Api";
+import Seo from "../../components/Seo";
 
 /*
  * POST /auth/forgot-password — body { email }. The backend always
@@ -36,6 +37,12 @@ const ForgotPassword = () => {
 
   return (
     <div className="fm-auth-page">
+      <Seo
+        title="Forgot password"
+        description="Reset your FIDMAP password."
+        path="/forgot-password"
+        noIndex
+      />
       <Link to="/" className="fm-brand fm-auth-brand" style={{ textDecoration: "none" }}>
         <div className="fm-brand-mark">
           <img src="/logo.svg" alt="FIDMAP" />

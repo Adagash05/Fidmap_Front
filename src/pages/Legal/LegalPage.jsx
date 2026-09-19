@@ -1,8 +1,8 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { LEGAL_LAST_UPDATED } from "../../constants/legal";
 import { APP_URL } from "../../constants/pricing";
+import Seo from "../../components/Seo";
 
 /*
  * Shared layout for the three public legal pages (Terms/Privacy/Refund),
@@ -22,13 +22,10 @@ import { APP_URL } from "../../constants/pricing";
  * article content, but it reuses the same design tokens (--ink,
  * --ink-soft, --line, fm-display/fm-mono) as everything else.
  */
-const LegalPage = ({ title, pageTitle, children }) => {
-  useEffect(() => {
-    document.title = pageTitle;
-  }, [pageTitle]);
-
+const LegalPage = ({ title, pageTitle, description, path, children }) => {
   return (
     <div className="fm-marketing">
+      <Seo title={pageTitle} description={description} path={path} />
       <header className="fm-mkt-nav">
         <Link to="/" className="fm-brand" style={{ textDecoration: "none" }}>
           <div className="fm-brand-mark">

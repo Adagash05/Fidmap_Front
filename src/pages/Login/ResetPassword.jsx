@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import ErrorBanner from "../ErrorBanner";
 import { auth as authApi, ApiError } from "../../components/Api";
+import Seo from "../../components/Seo";
 
 const MIN_LENGTH = 8;
 
@@ -95,6 +96,12 @@ const ResetPassword = () => {
 
   return (
     <div className="fm-auth-page">
+      <Seo
+        title="Reset password"
+        description="Set a new FIDMAP password."
+        path="/reset-password"
+        noIndex
+      />
       <Link to="/" className="fm-brand fm-auth-brand" style={{ textDecoration: "none" }}>
         <div className="fm-brand-mark">
           <img src="/logo.svg" alt="FIDMAP" />

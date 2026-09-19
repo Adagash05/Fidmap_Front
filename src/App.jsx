@@ -19,6 +19,19 @@ import ResetPassword from "./pages/Login/ResetPassword.jsx";
 import TermsOfService from "./pages/Legal/TermsOfService.jsx";
 import PrivacyPolicy from "./pages/Legal/PrivacyPolicy.jsx";
 import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import Pricing from "./pages/Pricing.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
+import Resources from "./pages/Resources.jsx";
+import CustomerFeedback from "./pages/Product/CustomerFeedback.jsx";
+import FeatureRequestManagement from "./pages/Product/FeatureRequestManagement.jsx";
+import FeedbackBoard from "./pages/Product/FeedbackBoard.jsx";
+import Alternatives from "./pages/Alternatives/Alternatives.jsx";
+import CannyAlternative from "./pages/Alternatives/CannyAlternative.jsx";
+import FrillAlternative from "./pages/Alternatives/FrillAlternative.jsx";
+import Blog from "./pages/Blog/Blog.jsx";
+import BlogPost from "./pages/Blog/BlogPost.jsx";
 
 /*
  * Routing.
@@ -38,6 +51,11 @@ import RefundPolicy from "./pages/Legal/RefundPolicy.jsx";
  *      /settings, which already exists                — protected
  *   /board/:boardId   public feedback experience for one board (no auth)
  *   /terms, /privacy, /refund-policy   public legal pages (no auth)
+ *   /pricing, /about, /contact, /resources, /customer-feedback,
+ *   /feature-request-management, /feedback-board, /alternatives(/canny|
+ *   /frill), /blog, /blog/:slug   public SEO/content pages (no auth,
+ *   marketing domain only)
+ *   *  (catch-all, all three trees) — 404 page
  *
  * PUBLIC WORKSPACE PORTAL — {workspaceSlug}.fidmap.co in production
  * (VITE_ROOT_DOMAIN configured), /p/:workspaceSlug as the dev/local
@@ -72,6 +90,7 @@ export default function App() {
           element={<PortalChangelog />}
         />
         <Route path="/sign-in" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     );
   }
@@ -112,6 +131,8 @@ export default function App() {
             element={<Navigate to="/settings" replace />}
           />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     );
   }
@@ -121,6 +142,23 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Marketing />} />
+
+      {/* SEO / content pages */}
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/resources" element={<Resources />} />
+      <Route path="/customer-feedback" element={<CustomerFeedback />} />
+      <Route
+        path="/feature-request-management"
+        element={<FeatureRequestManagement />}
+      />
+      <Route path="/feedback-board" element={<FeedbackBoard />} />
+      <Route path="/alternatives" element={<Alternatives />} />
+      <Route path="/alternatives/canny" element={<CannyAlternative />} />
+      <Route path="/alternatives/frill" element={<FrillAlternative />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
 
       {/* Public workspace */}
       <Route path="/p/:workspaceSlug" element={<PublicPortal />} />
@@ -134,6 +172,8 @@ export default function App() {
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/refund-policy" element={<RefundPolicy />} />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

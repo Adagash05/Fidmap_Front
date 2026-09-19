@@ -1496,6 +1496,40 @@ button.fm-plain {
   font-size: 11px;
   color: var(--ink-soft);
 }
+.fm-mkt-footer-expanded {
+  flex-direction: column;
+  align-items: stretch;
+}
+.fm-mkt-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.fm-mkt-footer-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fm-mkt-footer-heading {
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.fm-mkt-footer-grid a {
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.fm-mkt-footer-grid a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  .fm-mkt-footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* ------------------------------- legal pages -------------------------------- */
 /* Terms of Service / Privacy Policy / Refund Policy — long-form article

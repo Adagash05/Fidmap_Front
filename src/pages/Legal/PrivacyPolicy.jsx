@@ -2,7 +2,12 @@ import LegalPage from "./LegalPage";
 import { SUPPORT_EMAIL } from "../../constants/legal";
 
 const PrivacyPolicy = () => (
-  <LegalPage title="Privacy Policy" pageTitle="Privacy Policy | FIDMAP">
+  <LegalPage
+    title="Privacy Policy"
+    pageTitle="Privacy Policy | FIDMAP"
+    description="How FIDMAP collects, uses, and protects account, workspace, and end-user data."
+    path="/privacy"
+  >
     <p>
       This Privacy Policy explains what information FIDMAP collects, how
       we use it, and the choices you have. It applies to staff users who

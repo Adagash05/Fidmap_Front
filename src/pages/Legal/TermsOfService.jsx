@@ -2,7 +2,12 @@ import LegalPage from "./LegalPage";
 import { SUPPORT_EMAIL } from "../../constants/legal";
 
 const TermsOfService = () => (
-  <LegalPage title="Terms of Service" pageTitle="Terms of Service | FIDMAP">
+  <LegalPage
+    title="Terms of Service"
+    pageTitle="Terms of Service | FIDMAP"
+    description="FIDMAP's Terms of Service — account registration, subscription plans, billing, cancellation, and acceptable use."
+    path="/terms"
+  >
     <p>
       These Terms of Service ("Terms") govern your access to and use of
       FIDMAP, a hosted software service for collecting, organizing, voting

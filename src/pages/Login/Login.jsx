@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import ErrorBanner from "../ErrorBanner";
 import { useAuth } from "../../hooks/useAuth";
+import Seo from "../../components/Seo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Login = () => {
 
   return (
     <div className="fm-auth-page">
+      <Seo title="Sign in" description="Sign in to FIDMAP." path="/sign-in" noIndex />
       <Link
         to="/"
         className="fm-brand fm-auth-brand"

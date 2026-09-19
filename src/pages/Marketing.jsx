@@ -9,6 +9,23 @@ import {
 } from "lucide-react";
 
 import MarketingPricing from "../components/MarketingPricing";
+import Seo, { SITE_URL } from "../components/Seo";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "FIDMAP",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.svg`,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "FIDMAP",
+    url: SITE_URL,
+  },
+];
 
 /*
  * The real FIDMAP marketing landing page — / no longer renders a board,
@@ -18,6 +35,12 @@ import MarketingPricing from "../components/MarketingPricing";
 const Marketing = () => {
   return (
     <div className="fm-marketing">
+      <Seo
+        title="FIDMAP — Customer Feedback & Feature Request Software"
+        description="Collect customer feedback, let customers vote on feature requests, plan a public roadmap, and announce what shipped — all in one feedback portal."
+        path="/"
+        jsonLd={jsonLd}
+      />
       <header className="fm-mkt-nav">
         <div className="fm-brand">
           <div className="fm-brand-mark">
@@ -27,6 +50,8 @@ const Marketing = () => {
         </div>
 
         <nav className="fm-mkt-nav-links">
+          <Link to="/customer-feedback">Product</Link>
+          <Link to="/blog">Blog</Link>
           <a href="#pricing">Pricing</a>
           <a href="https://app.fidmap.co/sign-in">Sign in</a>
           <a href="https://app.fidmap.co/register" className="fm-btn-primary">
@@ -51,13 +76,14 @@ const Marketing = () => {
         </p>
 
         <div className="fm-mkt-cta-row">
-          <a href="https://app.fidmap.co/register">
-            {" "}
+          <a href="https://app.fidmap.co/register" className="fm-btn-primary">
             <ArrowRight size={14} />
             Get Started
           </a>
 
-          <a href="https://app.fidmap.co/sign-in">Sign in</a>
+          <a href="https://app.fidmap.co/sign-in" className="fm-btn-ghost">
+            Sign in
+          </a>
         </div>
       </section>
 
@@ -165,6 +191,15 @@ const Marketing = () => {
         <nav className="fm-mkt-footer-links">
           <a href="https://app.fidmap.co/register">Get Started</a>
           <a href="https://app.fidmap.co/sign-in">Sign in</a>
+          <Link to="/customer-feedback">Customer Feedback</Link>
+          <Link to="/feature-request-management">Feature Requests</Link>
+          <Link to="/feedback-board">Feedback Board</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/blog">Blog</Link>
+          <Link to="/resources">Resources</Link>
+          <Link to="/alternatives">Alternatives</Link>
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
           <Link to="/terms">Terms of Service</Link>
           <Link to="/privacy">Privacy Policy</Link>
           <Link to="/refund-policy">Refund Policy</Link>

@@ -6,6 +6,7 @@ import WorkspaceForm from "./WorkspaceForm";
 import { useAuth } from "../../hooks/useAuth";
 import { billing as billingApi } from "../../components/Api";
 import { openEmbeddedCheckout } from "../../utils/checkout";
+import Seo from "../../components/Seo";
 
 // The ?plan= URL param uses the same simple keys as MarketingPricing
 // (plan.key.toLowerCase() — "startup" | "business" | "lifetime"), and for
@@ -118,6 +119,12 @@ const MultiStepForm = () => {
 
   return (
     <>
+      <Seo
+        title="Register"
+        description="Create your FIDMAP workspace."
+        path="/register"
+        noIndex
+      />
       {step === 1 && (
         <UserForm
           formData={formData}

@@ -2,7 +2,12 @@ import LegalPage from "./LegalPage";
 import { SUPPORT_EMAIL } from "../../constants/legal";
 
 const RefundPolicy = () => (
-  <LegalPage title="Refund Policy" pageTitle="Refund Policy | FIDMAP">
+  <LegalPage
+    title="Refund Policy"
+    pageTitle="Refund Policy | FIDMAP"
+    description="FIDMAP's refund policy for trials, Startup/Business subscriptions, and the one-time Lifetime plan."
+    path="/refund-policy"
+  >
     <p>
       This Refund Policy explains how refunds work for FIDMAP's
       subscription plans and one-time Lifetime purchase. It's intended to
