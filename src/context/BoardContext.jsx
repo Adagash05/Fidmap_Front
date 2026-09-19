@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 
 import { boards as boardsApi, WORKSPACE_ID } from "../components/Api";
 import { useAuth } from "../hooks/useAuth";
+import { trackEvent } from "../utils/analytics";
 
 const BoardContext = createContext(null);
 
@@ -68,6 +69,9 @@ export function BoardProvider({ children }) {
   const createBoard = useCallback(
     async (data) => {
       const created = await boardsApi.create(workspaceId, data);
+      // Fires right after the backend confirms creation — no board
+      // name/description is sent, just that a board now exists.
+      trackEvent("board_created", { board_id: created?.id });
       await loadBoards();
       return created;
     },

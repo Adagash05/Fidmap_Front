@@ -6,6 +6,12 @@ import WorkspaceForm from "./WorkspaceForm";
 import { useAuth } from "../../hooks/useAuth";
 import { billing as billingApi } from "../../components/Api";
 import { openEmbeddedCheckout } from "../../utils/checkout";
+import { waitForSubscriptionSync } from "../../utils/billingSync";
+import { trackEvent } from "../../utils/analytics";
+import {
+  planKeyFromBillingPlan,
+  intervalFromBillingPlan,
+} from "../../constants/pricing";
 import Seo from "../../components/Seo";
 
 // The ?plan= URL param uses the same simple keys as MarketingPricing
@@ -84,12 +90,47 @@ const MultiStepForm = () => {
             planForCheckout,
           );
 
+          // Checkout session created — genuinely starting now, not
+          // merely "form submitted".
+          trackEvent("checkout_started", {
+            plan: planKeyFromBillingPlan(planForCheckout),
+            billing_period:
+              intervalFromBillingPlan(planForCheckout) || "one_time",
+          });
+
           // Embedded (in-page) checkout — stays on this screen instead of
           // navigating away. Whether the visitor completes payment or
           // just closes it, either way we continue into the app the same
           // way a closed Paddle overlay used to just fall through
           // afterward; the webhook is the real source of truth regardless.
-          await openEmbeddedCheckout(checkout.checkoutUrl).done;
+          const checkoutHandle = openEmbeddedCheckout(checkout.checkoutUrl);
+          await checkoutHandle.done;
+
+          // Confirm the purchase in the background rather than making
+          // the user wait here — this component navigates to /dashboard
+          // right after this block regardless (unchanged timing), and
+          // this poll has no UI state to protect from an unmount, so it
+          // isn't tied to isMountedRef the way SettingsSubscription.jsx's
+          // is; it just keeps checking until the backend confirms the
+          // paid plan (or gives up after the same bounded timeout) and
+          // fires `purchase` only then — never merely because the embed
+          // closed or reported success client-side.
+          waitForSubscriptionSync(
+            () => billingApi.getSubscription(result.workspaceId),
+            () => {},
+            (updatedSubscription) =>
+              updatedSubscription?.plan === planForCheckout &&
+              ["ACTIVE", "TRIALING"].includes(updatedSubscription?.status),
+            { current: true },
+          ).then((syncResult) => {
+            if (syncResult === "matched") {
+              trackEvent("purchase", {
+                plan: planKeyFromBillingPlan(planForCheckout),
+                billing_period:
+                  intervalFromBillingPlan(planForCheckout) || "one_time",
+              });
+            }
+          });
         } catch {
           // The provider's webhook is the real source of truth
           // regardless — if checkout couldn't be created/opened, the

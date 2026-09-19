@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import Marketing from "./pages/Marketing.jsx";
 import Boards from "./pages/Boards.jsx";
@@ -32,6 +33,7 @@ import CannyAlternative from "./pages/Alternatives/CannyAlternative.jsx";
 import FrillAlternative from "./pages/Alternatives/FrillAlternative.jsx";
 import Blog from "./pages/Blog/Blog.jsx";
 import BlogPost from "./pages/Blog/BlogPost.jsx";
+import { initGA, trackPageView } from "./utils/analytics.js";
 
 /*
  * Routing.
@@ -73,6 +75,23 @@ export default function App() {
   const hostname = window.location.hostname;
   const subdomainSlug = getWorkspaceSlugFromHostname();
   const isAppDomain = hostname === "app.fidmap.co";
+  const location = useLocation();
+
+  // GA4 — loaded exactly once regardless of which of the three route
+  // trees below actually renders (initGA() no-ops on any call after the
+  // first). Page views are sent manually on every route change,
+  // including the first, with send_page_view:false set in initGA() so
+  // gtag's own automatic page_view never fires alongside this one — see
+  // utils/analytics.js for why. Only pathname is sent, never the query
+  // string, since some routes (e.g. /reset-password?token=...) carry
+  // sensitive values there.
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
 
   // Workspace subdomain
   if (subdomainSlug) {

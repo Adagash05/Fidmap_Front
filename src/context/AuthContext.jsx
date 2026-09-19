@@ -5,6 +5,7 @@ import {
   getToken,
   setToken as persistToken,
 } from "../components/Api";
+import { trackEvent } from "../utils/analytics";
 
 const AuthContext = createContext(null);
 
@@ -64,18 +65,17 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const result = await authApi.logIn(email, password);
 
-    console.log("LOGIN RESPONSE:", result);
-
     const accessToken = result?.accessToken ?? null;
-
-    console.log("ACCESS TOKEN:", accessToken);
 
     persistToken(accessToken);
     setTokenState(accessToken);
 
-    console.log("TOKEN FROM STORAGE:", localStorage.getItem("accessToken"));
-
     await restore();
+
+    // Fires only once the token exchange + restore() above both
+    // succeeded — no email/password/token is sent, just the fact that a
+    // login happened.
+    trackEvent("login", { method: "email" });
 
     return result;
   };
@@ -94,6 +94,17 @@ export const AuthProvider = ({ children }) => {
     setTokenState(accessToken);
 
     await restore();
+
+    // The backend creates the first user AND the workspace in this one
+    // call (see Api.js's auth.register comment), so both events fire
+    // together here, right after both have actually succeeded. No email
+    // is sent — just the signup method and, for workspace_created, the
+    // new workspace's id (not sensitive — same id already used
+    // elsewhere, e.g. billing calls).
+    trackEvent("sign_up", { method: "email" });
+    if (result?.workspaceId) {
+      trackEvent("workspace_created", { workspace_id: result.workspaceId });
+    }
 
     return result;
   };

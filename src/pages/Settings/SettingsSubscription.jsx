@@ -4,6 +4,8 @@ import ErrorBanner from "../ErrorBanner";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { billing as billingApi } from "../../components/Api";
 import { openEmbeddedCheckout } from "../../utils/checkout";
+import { waitForSubscriptionSync } from "../../utils/billingSync";
+import { trackEvent } from "../../utils/analytics";
 import {
   PLAN_LABEL,
   PLANS,
@@ -30,58 +32,6 @@ const formatDate = (iso) =>
         year: "numeric",
       })
     : null;
-
-/*
- * A billing mutation (checkout, plan change, cancellation) completing on
- * the FIDMAP backend does not mean the payment provider's webhook has
- * already updated the backend's subscription record.
- *
- * Therefore, after a billing mutation, poll the backend for a short,
- * bounded period until the expected subscription state is visible.
- *
- * Returns a status string rather than the subscription itself, so a
- * caller can tell the difference between "confirmed", "gave up waiting
- * (but the mutation itself still succeeded)", and "the component
- * unmounted mid-poll" — the last of which must never touch React state.
- */
-const SYNC_INTERVAL_MS = 1000;
-const SYNC_TIMEOUT_MS = 15000;
-
-const waitForSubscriptionSync = async (
-  getSubscription,
-  setSubscription,
-  matchesExpectedState,
-  isMountedRef,
-) => {
-  const startedAt = Date.now();
-
-  while (Date.now() - startedAt < SYNC_TIMEOUT_MS) {
-    if (!isMountedRef.current) return "unmounted";
-
-    try {
-      const updatedSubscription = await getSubscription();
-
-      if (!isMountedRef.current) return "unmounted";
-
-      setSubscription(updatedSubscription);
-
-      if (matchesExpectedState(updatedSubscription)) {
-        return "matched";
-      }
-    } catch {
-      /*
-       * A temporary GET failure should not immediately fail the billing
-       * operation. Continue polling until the synchronization timeout.
-       */
-    }
-
-    if (!isMountedRef.current) return "unmounted";
-
-    await new Promise((resolve) => setTimeout(resolve, SYNC_INTERVAL_MS));
-  }
-
-  return isMountedRef.current ? "timeout" : "unmounted";
-};
 
 const SettingsSubscription = ({ workspaceId }) => {
   const [subscription, setSubscription] = useState(null);
@@ -191,6 +141,14 @@ const SettingsSubscription = ({ workspaceId }) => {
         billingPlan,
       );
 
+      // Checkout is genuinely starting now (session created, embed is
+      // about to open) — not merely "button clicked", which could still
+      // fail before this point.
+      trackEvent("checkout_started", {
+        plan: planKeyFromBillingPlan(billingPlan),
+        billing_period: intervalFromBillingPlan(billingPlan) || "one_time",
+      });
+
       // Embedded (in-page) checkout, forced to the light theme — stays on
       // this screen instead of redirecting away. Whichever way it ends
       // (payment succeeded or the visitor just closed it), the webhook
@@ -212,6 +170,16 @@ const SettingsSubscription = ({ workspaceId }) => {
           ["ACTIVE", "TRIALING"].includes(updatedSubscription?.status),
         isMountedRef,
       );
+
+      // Fires only once the backend itself confirms the new plan is
+      // active — never merely because checkout closed or the embed
+      // reported success client-side.
+      if (syncResult === "matched") {
+        trackEvent("purchase", {
+          plan: planKeyFromBillingPlan(billingPlan),
+          billing_period: intervalFromBillingPlan(billingPlan) || "one_time",
+        });
+      }
 
       if (syncResult === "timeout" && isMountedRef.current) {
         setSyncNotice(

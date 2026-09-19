@@ -13,6 +13,7 @@ import {
   feedback as feedbackApi,
   votes as votesApi,
 } from "../../components/Api";
+import { trackEvent } from "../../utils/analytics";
 
 /* ----------------------------------------- board ------------------------------------------ */
 /*
@@ -238,6 +239,11 @@ const Board = () => {
       },
       boardId,
     );
+
+    // Fires only after the backend confirms creation — no title,
+    // description, or visitor name/email is sent, just which board it
+    // was posted to.
+    trackEvent("feedback_created", { board_id: boardId });
 
     setShowNew(false);
     reload();
