@@ -1516,7 +1516,7 @@ button.fm-plain {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 2px;
-  font-weight: bold;
+  font-weight: 300;
 }
 .fm-mkt-footer-grid a {
   font-size: 13px;
