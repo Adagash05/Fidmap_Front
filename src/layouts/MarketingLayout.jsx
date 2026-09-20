@@ -52,14 +52,14 @@ const MarketingLayout = ({ children }) => (
         </div>
 
         <div>
-          <div className="fm-mkt-footer-heading fm-mono">Resources</div>
+          <div className="fm-mkt-footer-heading fm-mono">Support</div>
           <Link to="/resources">Resources</Link>
-          <Link to="/blog">Blog</Link>
+          <Link to="/contact">Contact</Link>
           <Link to="/about">About</Link>
         </div>
 
         <div>
-          <div className="fm-mkt-footer-heading fm-mono">Compare</div>
+          <div className="fm-mkt-footer-heading fm-mono">Switch</div>
           <Link to="/alternatives/canny">Canny Alternative</Link>
           <Link to="/alternatives/frill">Frill Alternative</Link>
         </div>

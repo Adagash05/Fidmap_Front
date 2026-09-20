@@ -10,7 +10,6 @@ import {
 
 import MarketingPricing from "../components/MarketingPricing";
 import Seo, { SITE_URL } from "../components/Seo";
-
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -78,7 +77,7 @@ const Marketing = () => {
         <div className="fm-mkt-cta-row">
           <a href="https://app.fidmap.co/register" className="fm-btn-primary">
             <ArrowRight size={14} />
-            Get Started
+            Start free trial
           </a>
 
           <a href="https://app.fidmap.co/sign-in" className="fm-btn-ghost">
@@ -176,37 +175,60 @@ const Marketing = () => {
           Set up your workspace in a couple of minutes.
         </p>
         <a href="https://app.fidmap.co/register" className="fm-btn-primary">
-          Get started <ArrowRight size={14} />
+          Start free trial <ArrowRight size={14} />
         </a>
       </section>
 
-      <footer className="fm-mkt-footer">
-        <div className="fm-brand">
-          <div className="fm-brand-mark">
-            <img src="/logo.svg" alt="FIDMAP" />
+      <footer className="fm-mkt-footer fm-mkt-footer-expanded">
+        <div className="fm-mkt-footer-grid">
+          <div>
+            <div className="fm-mkt-footer-heading fm-mono">Product</div>
+            <Link to="/customer-feedback">Customer Feedback</Link>
+            <Link to="/feature-request-management">Feature Requests</Link>
+            <Link to="/feedback-board">Feedback Board</Link>
+            <Link to="/pricing">Pricing</Link>
           </div>
-          <div className="fm-brand-name fm-display">fidmap</div>
+
+          <div>
+            <div className="fm-mkt-footer-heading fm-mono">Support</div>
+            <Link to="/resources">Resources</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/about">About</Link>
+          </div>
+
+          <div>
+            <div className="fm-mkt-footer-heading fm-mono">Switch</div>
+            <Link to="/alternatives/canny">Canny Alternative</Link>
+            <Link to="/alternatives/frill">Frill Alternative</Link>
+          </div>
+
+          <div>
+            <div className="fm-mkt-footer-heading fm-mono">Legal</div>
+            <Link to="/terms">Terms of Service</Link>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/refund-policy">Refund Policy</Link>
+          </div>
         </div>
 
-        <nav className="fm-mkt-footer-links">
-          <a href="https://app.fidmap.co/register">Get Started</a>
-          <a href="https://app.fidmap.co/sign-in">Sign in</a>
-          <Link to="/customer-feedback">Customer Feedback</Link>
-          <Link to="/feature-request-management">Feature Requests</Link>
-          <Link to="/feedback-board">Feedback Board</Link>
-          <Link to="/pricing">Pricing</Link>
-          <Link to="/blog">Blog</Link>
-          <Link to="/resources">Resources</Link>
-          <Link to="/alternatives">Alternatives</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
-          <Link to="/terms">Terms of Service</Link>
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/refund-policy">Refund Policy</Link>
-        </nav>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 12,
+          }}
+        >
+          <div className="fm-brand">
+            <div className="fm-brand-mark">
+              <img src="/logo.svg" alt="FIDMAP" />
+            </div>
+            <div className="fm-brand-name fm-display">fidmap</div>
+          </div>
 
-        <div className="fm-mkt-footer-copy fm-mono">
-          © {new Date().getFullYear()} fidmap
+          <div className="fm-mkt-footer-copy fm-mono">
+            © {new Date().getFullYear()} fidmap
+          </div>
         </div>
       </footer>
     </div>

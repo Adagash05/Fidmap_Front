@@ -1511,11 +1511,12 @@ button.fm-plain {
   gap: 8px;
 }
 .fm-mkt-footer-heading {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 1rem;
+  color: #000;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 2px;
+  font-weight: bold;
 }
 .fm-mkt-footer-grid a {
   font-size: 13px;
