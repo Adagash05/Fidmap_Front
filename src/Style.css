@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap");
 
 :root {
-  --paper: rgb(189, 185, 185);
+  --paper: #fdfdfd;
   --paper-soft: #e4decd;
   --ink: #1b2430;
   --ink-soft: #5b6270;
@@ -9,7 +9,7 @@
   --moss: #5f7a52;
   --brass: #2563eb;
   --teal: #2f6f6b;
-  --brick: #9c4a3c;
+  --brick: #2445b1;
   --slate: #8b93a0;
   --indigo: #4c5b7a;
 
@@ -126,7 +126,7 @@ body {
   align-items: center;
   gap: 6px;
   background: var(--brass);
-  color: #fff;
+  color: #000;
   border: none;
   padding: 9px 16px;
   border-radius: 8px;
