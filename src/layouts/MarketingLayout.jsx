@@ -34,7 +34,7 @@ const MarketingLayout = ({ children }) => (
         <Link to="/alternatives">Compare</Link>
         <a href={`${APP_URL}/sign-in`}>Sign in</a>
         <a href={`${APP_URL}/register`} className="fm-btn-primary">
-          Get started
+          Start free trial
         </a>
       </nav>
     </header>
