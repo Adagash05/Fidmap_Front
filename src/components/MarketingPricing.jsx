@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
 
-import { PLANS, TRIAL_DAYS, yearlySavings, APP_URL } from "../constants/pricing";
+import {
+  PLANS,
+  TRIAL_DAYS,
+  yearlySavings,
+  APP_URL,
+} from "../constants/pricing";
 
 /*
  * Public pricing section for the Marketing page.
@@ -33,7 +38,8 @@ const MarketingPricing = ({ id }) => {
       <h2 className="fm-display fm-mkt-h2">Simple, transparent pricing</h2>
 
       <p className="fm-mkt-sub" style={{ marginBottom: 8 }}>
-        Start with a {TRIAL_DAYS}-day free trial on Startup. No card required.
+        Start with a {TRIAL_DAYS}-day free trial on Startup. – No credit card
+        required.
       </p>
 
       <div className="fm-mkt-pricing-toggle">
@@ -130,8 +136,8 @@ const MarketingPricing = ({ id }) => {
       </div>
 
       <p className="fm-mkt-pricing-note">
-        Start with the {TRIAL_DAYS}-day Startup trial, then upgrade to Business
-        or Lifetime whenever you're ready.
+        Start with the {TRIAL_DAYS}-day Startup trial,– No credit card required,
+        then upgrade to Business or Lifetime whenever you're ready.
       </p>
     </section>
   );
