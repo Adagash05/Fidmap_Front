@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap");
 
 :root {
-  --paper: hsl(344, 81%, 12%) (148, 113, 113);
-  --paper-soft: hsl(117, 42%, 28%);
+  --paper: white;
+  --paper-soft: #e4decd;
   --ink: #1b2430;
   --ink-soft: #5b6270;
   --line: #d7cfb9;
@@ -17,7 +17,7 @@
   --STANDARD-COLOR: #2353d8c7;
   --STANDARD-BG: #cac4c43d;
   --STANDARD-ACTIVE: #beb9b9b7;
-  --STANDARD-WHITE: #fff;
+  --STANDARD-WHITE: #f8f4f4;
   --GENERAL-BG: #eeeeee;
   --BG: whitesmoke;
   --BR: 10px;
