@@ -10,11 +10,9 @@ import {
   Map,
   MessageSquare,
   Megaphone,
-  Play,
   Sparkles,
   ThumbsUp,
   Users,
-  X,
 } from "lucide-react";
 
 import MarketingPricing from "../components/MarketingPricing";
