@@ -333,7 +333,7 @@ const Board = () => {
         <main className="fm-main">
           <div className="fm-searchrow">
             <div className="fm-search">
-              <Search size={15} color="#5B6270" />
+              <Search size={15} color="var(--fm-muted)" />
 
               <input
                 placeholder="Search requests"

@@ -219,7 +219,7 @@ function ChangelogView({ workspaceId, hideHeader = false } = {}) {
 
             <div className="fm-log-dot">
               <div className="fm-log-flag">
-                <Flag size={8} color="#B98A3D" />
+                <Flag size={8} color="var(--fidmap-blue)" />
               </div>
 
               <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>

@@ -14,8 +14,8 @@ function VoteMarker({ votes, voted, busy, onToggle }) {
     >
       <Triangle
         size={13}
-        fill={voted ? "#B98A3D" : "none"}
-        color={voted ? "#B98A3D" : "#5B6270"}
+        fill={voted ? "var(--fidmap-blue)" : "none"}
+        color={voted ? "var(--fidmap-blue)" : "var(--fm-muted)"}
       />
 
       <span className="count">{votes ?? 0}</span>
