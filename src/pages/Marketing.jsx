@@ -458,6 +458,7 @@ const Marketing = () => {
         </section>
 
         {/* OPTIONAL VIDEO */}
+
         {/* <section className="fm-video-section">
           <div className="fm-video-copy">
             <div className="fm-section-eyebrow">
@@ -476,10 +477,14 @@ const Marketing = () => {
           </div>
 
           <div className="fm-video-wrapper">
-            <video controls preload="metadata" poster="/fidmap-demo-poster.png">
-              <source src="/fidmap-demo.mp4" type="video/mp4" />
-              Your browser does not support video playback.
-            </video>
+            <iframe
+              src="https://www.youtube.com/embed/TXb2bd0QkBA"
+              title="FIDMAP product demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
 
             <div className="fm-video-overlay-label">
               <Play size={14} />

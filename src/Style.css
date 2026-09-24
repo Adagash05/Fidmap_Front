@@ -271,7 +271,9 @@ code:where(:not(.fm-marketing *)) {
   border-color: var(--fm-danger);
   color: #fff;
 }
-.fm-btn-primary.fm-btn-danger:where(:not(.fm-marketing *)):hover:not(:disabled) {
+.fm-btn-primary.fm-btn-danger:where(:not(.fm-marketing *)):hover:not(
+    :disabled
+  ) {
   background: var(--fm-danger-dark);
   border-color: var(--fm-danger-dark);
 }
@@ -654,7 +656,10 @@ code:where(:not(.fm-marketing *)) {
   top: 6px;
   bottom: -34px;
   width: 1px;
-  background-image: linear-gradient(var(--fm-border-strong) 60%, transparent 0%);
+  background-image: linear-gradient(
+    var(--fm-border-strong) 60%,
+    transparent 0%
+  );
   background-size: 1px 8px;
   background-repeat: repeat-y;
 }
@@ -1754,7 +1759,6 @@ button.fm-dash-update:hover {
    ========================================================= */
 
 .fm-marketing {
-
   /*  Palette tokens now live on :root (same values). The legacy tokens below are frozen at their
      original values so the marketing site's older rules and inline styles render exactly as before.  */
 
@@ -1834,7 +1838,7 @@ button.fm-dash-update:hover {
   gap: 8px;
 
   background: var(--fidmap-blue);
-  color: #000 !important;
+  color: #fff !important;
 
   border: 1px solid var(--fidmap-blue);
   border-radius: 9px;
@@ -2607,7 +2611,6 @@ button.fm-dash-update:hover {
 .fm-video-section {
   width: min(1100px, calc(100% - 40px));
   margin: 0 auto;
-
   padding: 50px 0 110px;
 }
 
@@ -2622,9 +2625,11 @@ button.fm-dash-update:hover {
   line-height: 1.7;
 }
 
+/* YouTube video container */
 .fm-video-wrapper {
   position: relative;
-
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
 
   border: 1px solid #dbe3ef;
@@ -2635,16 +2640,19 @@ button.fm-dash-update:hover {
   box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
 }
 
-.fm-video-wrapper video {
+/* YouTube iframe */
+.fm-video-wrapper iframe {
   display: block;
-
   width: 100%;
-  height: auto;
+  height: 100%;
+
+  border: 0;
+  border-radius: inherit;
 }
 
+/* Small demo label */
 .fm-video-overlay-label {
   position: absolute;
-
   top: 15px;
   left: 15px;
 
@@ -2655,91 +2663,62 @@ button.fm-dash-update:hover {
   padding: 7px 10px;
 
   background: rgba(15, 23, 42, 0.78);
-  color: white;
+  color: #ffffff;
 
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 7px;
 
   font-size: 10px;
   font-weight: 600;
+  line-height: 1;
 
   pointer-events: none;
+  z-index: 2;
 }
 
 /* =========================================================
-   VALUE PROPOSITION
+   RESPONSIVE
    ========================================================= */
 
-.fm-value-section {
-  padding: 110px 20px;
+@media (max-width: 768px) {
+  .fm-video-section {
+    width: min(100% - 28px, 1100px);
+    padding: 35px 0 80px;
+  }
 
-  background: #f8fafc;
+  .fm-video-copy {
+    margin-bottom: 25px;
+  }
+
+  .fm-video-wrapper {
+    border-radius: 12px;
+  }
+
+  .fm-video-overlay-label {
+    top: 10px;
+    left: 10px;
+    padding: 6px 8px;
+    font-size: 9px;
+  }
 }
 
-.fm-value-grid {
-  width: min(1080px, 100%);
-  margin: 55px auto 0;
+@media (max-width: 480px) {
+  .fm-video-section {
+    width: calc(100% - 24px);
+    padding: 30px 0 65px;
+  }
 
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  .fm-video-copy p {
+    font-size: 14px;
+  }
 
-  gap: 14px;
-}
+  .fm-video-wrapper {
+    border-radius: 10px;
+  }
 
-.fm-value-card {
-  padding: 26px;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    border-color 160ms ease;
-}
-
-.fm-value-card:hover {
-  transform: translateY(-2px);
-
-  border-color: #bfdbfe;
-
-  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.06);
-}
-
-.fm-value-icon {
-  width: 38px;
-  height: 38px;
-
-  display: grid;
-  place-items: center;
-
-  margin-bottom: 18px;
-
-  border-radius: 9px;
-
-  background: #eff6ff;
-  color: var(--fidmap-blue);
-}
-
-.fm-value-icon svg {
-  width: 18px;
-}
-
-.fm-value-card h3 {
-  margin: 0;
-
-  font-size: 15px;
-  letter-spacing: -0.02em;
-}
-
-.fm-value-card p {
-  margin: 8px 0 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-  line-height: 1.65;
+  .fm-video-overlay-label {
+    display: none;
+  }
 }
 
 /* =========================================================
