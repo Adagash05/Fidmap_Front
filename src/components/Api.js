@@ -17,7 +17,6 @@ export function setToken(token) {
   else localStorage.removeItem(TOKEN_KEY);
 }
 
-
 async function request(path, { method = "GET", body, auth = false } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (auth) {
@@ -33,10 +32,7 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(
-      `Couldn't reach the backend at ${BASE_URL}. Is it running, and does CorsConfig allow this origin?`,
-      0,
-    );
+    throw new ApiError(`Something went wrong,please try again later`, 0);
   }
 
   const text = await res.text();
@@ -341,8 +337,7 @@ export const partnerPortal = {
   getConversions: () =>
     request(`/api/partner/referrals/conversions`, { auth: true }),
 
-  getProfile: () =>
-    request(`/api/partner/referrals/profile`, { auth: true }),
+  getProfile: () => request(`/api/partner/referrals/profile`, { auth: true }),
 };
 
 /* ---------------------------------- board ----------------------------------- */
