@@ -14,6 +14,11 @@ import Login from "./pages/Login/Login.jsx";
 import MultiStepForm from "./pages/Register/MultiStepForm.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import PartnerProtectedRoute from "./PartnerProtectedRoute.jsx";
+import ReferralPartners from "./pages/Admin/ReferralPartners.jsx";
+import PartnerSignIn from "./pages/Partner/PartnerSignIn.jsx";
+import AcceptInvitation from "./pages/Partner/AcceptInvitation.jsx";
+import PartnerDashboard from "./pages/Partner/PartnerDashboard.jsx";
 import { getWorkspaceSlugFromHostname } from "./utils/tenant.js";
 import ForgotPassword from "./pages/Login/ForgotPassword.jsx";
 import ResetPassword from "./pages/Login/ResetPassword.jsx";
@@ -34,6 +39,7 @@ import FrillAlternative from "./pages/Alternatives/FrillAlternative.jsx";
 import Blog from "./pages/Blog/Blog.jsx";
 import BlogPost from "./pages/Blog/BlogPost.jsx";
 import { initGA, trackPageView } from "./utils/analytics.js";
+import { captureReferralCode } from "./utils/referral.js";
 
 /*
  * Routing.
@@ -47,6 +53,12 @@ import { initGA, trackPageView } from "./utils/analytics.js";
  *   /roadmap     staff roadmap mgmt    — protected
  *   /changelog   staff changelog mgmt  — protected
  *   /settings    staff settings        — protected
+ *   /admin/referrals   FIDMAP's own referral-partner management — protected,
+ *      then gated inline to role SUPER_ADMIN (see ReferralPartners.jsx)
+ *   /partner/sign-in, /partner/accept-invitation   public (a partner is a
+ *      staff User with role PARTNER — no separate auth system)
+ *   /partner/dashboard   partner's own referral stats — protected via
+ *      PartnerProtectedRoute (role PARTNER, not just isStaff)
  *   /billing/success, /settings/billing   the two URLs the backend's
  *      Polar checkout session is hardcoded to send the browser back to
  *      (BillingService: successUrl/returnUrl) — both just redirect into
@@ -93,6 +105,20 @@ export default function App() {
     trackPageView(location.pathname);
   }, [location.pathname]);
 
+  // Referral capture (?ref=CODE) — first-touch, see utils/referral.js.
+  // Deliberately NOT a useEffect: Marketing.jsx's CTAs and
+  // MarketingPricing.jsx's registerUrl both read the stored code
+  // (withReferralParam()) while THIS SAME render builds their href, to
+  // forward it onto the app.fidmap.co registration link — a real
+  // cross-origin navigation that localStorage can't otherwise cross (see
+  // MarketingPricing.jsx's own comment on why plan/interval work the same
+  // way). An effect would run one render too late for a link built during
+  // this render to see it. Calling it here instead means every render
+  // (including the very first paint) already reflects capture — cheap and
+  // idempotent (a no-op past the first successful capture), so re-running
+  // it on every render, including a location change, is harmless.
+  captureReferralCode();
+
   // Workspace subdomain
   if (subdomainSlug) {
     return (
@@ -125,6 +151,20 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
+        {/* Referral/partner system — see docs/backend-api-requirements.md
+            for the verified contract this is built against. A partner is
+            a plain staff User (role PARTNER), so sign-in reuses /sign-in's
+            own auth; these routes are public the same way /sign-in is. */}
+        <Route path="/partner/sign-in" element={<PartnerSignIn />} />
+        <Route
+          path="/partner/accept-invitation"
+          element={<AcceptInvitation />}
+        />
+        <Route element={<PartnerProtectedRoute />}>
+          <Route path="/partner/dashboard" element={<PartnerDashboard />} />
+          <Route path="/partner/profile" element={<PartnerDashboard />} />
+        </Route>
+
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
@@ -137,6 +177,10 @@ export default function App() {
           <Route path="/roadmap" element={<RoadmapView />} />
           <Route path="/changelog" element={<ChangelogView />} />
           <Route path="/settings" element={<Settings />} />
+          {/* SUPER_ADMIN-gated inline (see ReferralPartners.jsx) — same
+              pattern Settings.jsx uses for its own isOwner-only tab,
+              rather than a second route-guard component. */}
+          <Route path="/admin/referrals" element={<ReferralPartners />} />
           {/* Backend-hardcoded Polar checkout return URLs (BillingService
               successUrl/returnUrl) — neither is a real page, both just
               land back on Settings, which re-fetches subscription state

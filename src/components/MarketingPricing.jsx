@@ -7,6 +7,7 @@ import {
   yearlySavings,
   APP_URL,
 } from "../constants/pricing";
+import { withReferralParam } from "../utils/referral";
 
 /*
  * Public pricing section for the Marketing page.
@@ -20,6 +21,10 @@ import {
  * fidmap.co, since /register only exists on app.fidmap.co — see App.jsx).
  * Matches the same pattern Marketing.jsx's own sign-in/register links
  * already use.
+ *
+ * withReferralParam() forwards a stored first-touch ?ref=CODE (see
+ * utils/referral.js) onto this same URL for the same cross-origin
+ * reason — a no-op when there's no referral code on file.
  *
  * Startup  -> https://app.fidmap.co/register?plan=startup&interval=monthly|yearly
  * Business -> https://app.fidmap.co/register?plan=business&interval=monthly|yearly
@@ -80,10 +85,11 @@ const MarketingPricing = ({ id }) => {
               ? "/year"
               : "/month";
 
-          const registerUrl =
+          const registerUrl = withReferralParam(
             plan.key === "LIFETIME"
               ? `${APP_URL}/register?plan=${plan.key.toLowerCase()}`
-              : `${APP_URL}/register?plan=${plan.key.toLowerCase()}&interval=${interval}`;
+              : `${APP_URL}/register?plan=${plan.key.toLowerCase()}&interval=${interval}`,
+          );
 
           return (
             <div

@@ -10,13 +10,16 @@ import {
   Map,
   MessageSquare,
   Megaphone,
+  Play,
   Sparkles,
   ThumbsUp,
   Users,
+  X,
 } from "lucide-react";
 
 import MarketingPricing from "../components/MarketingPricing";
 import Seo, { SITE_URL } from "../components/Seo";
+import { withReferralParam } from "../utils/referral";
 
 const jsonLd = [
   {
@@ -137,7 +140,7 @@ const Marketing = () => {
           <a href="https://app.fidmap.co/sign-in">Sign in</a>
 
           <a
-            href="https://app.fidmap.co/register"
+            href={withReferralParam("https://app.fidmap.co/register")}
             className="fm-btn-primary fm-nav-cta"
           >
             Start free trial
@@ -166,7 +169,7 @@ const Marketing = () => {
 
           <div className="fm-mkt-cta-row">
             <a
-              href="https://app.fidmap.co/register"
+              href={withReferralParam("https://app.fidmap.co/register")}
               className="fm-btn-primary fm-btn-large"
             >
               Start free trial
@@ -456,7 +459,6 @@ const Marketing = () => {
         </section>
 
         {/* OPTIONAL VIDEO */}
-
         {/* <section className="fm-video-section">
           <div className="fm-video-copy">
             <div className="fm-section-eyebrow">
@@ -475,14 +477,10 @@ const Marketing = () => {
           </div>
 
           <div className="fm-video-wrapper">
-            <iframe
-              src="https://www.youtube.com/embed/TXb2bd0QkBA"
-              title="FIDMAP product demo"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+            <video controls preload="metadata" poster="/fidmap-demo-poster.png">
+              <source src="/fidmap-demo.mp4" type="video/mp4" />
+              Your browser does not support video playback.
+            </video>
 
             <div className="fm-video-overlay-label">
               <Play size={14} />
@@ -649,7 +647,7 @@ const Marketing = () => {
           </p>
 
           <a
-            href="https://app.fidmap.co/register"
+            href={withReferralParam("https://app.fidmap.co/register")}
             className="fm-btn-primary fm-btn-large"
           >
             Start free trial

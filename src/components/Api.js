@@ -17,6 +17,7 @@ export function setToken(token) {
   else localStorage.removeItem(TOKEN_KEY);
 }
 
+
 async function request(path, { method = "GET", body, auth = false } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (auth) {
@@ -177,6 +178,171 @@ export const users = {
         confirmPassword,
       },
     }),
+};
+
+/* ------------------- referral admin — verified 2026-09-27 --------------------
+ * Verified against the real Spring Boot source (backend zip uploaded this
+ * session — com.amsal.fidmap.referral.*). Confirmed facts below; anything
+ * not listed here was not checked.
+ *
+ * CONFIRMED:
+ * - SecurityConfig gates /api/admin/referrals/** with hasRole("SUPER_ADMIN")
+ *   — a real platform role (Role.java: SUPER_ADMIN, OWNER, ADMIN, MEMBER,
+ *   PARTNER), distinct from a workspace OWNER. Gate any admin-only UI on
+ *   currentUser.role === "SUPER_ADMIN", not isStaff/isOwner.
+ * - There is NO per-workspace referral-partner endpoint. The
+ *   `/api/referral-partners/workspace/{id}` contract a previous session
+ *   guessed at (and the Settings > Referrals tab it built) does not exist
+ *   anywhere in the backend — removed; see SettingsReferrals.jsx's git
+ *   history if that work is ever needed again.
+ * - ReferralAdminController wraps every response in the standard
+ *   { success, message, data } envelope EXCEPT invitePartner below, which
+ *   returns ReferralInvitationResponse bare. request()'s `"data" in
+ *   payload` check already handles both without special-casing.
+ * - ReferralPartnerResponse.java (the type every method here actually
+ *   returns) is referenced throughout ReferralAdminService.java via
+ *   .builder(), but the class file itself is missing from the uploaded
+ *   backend — it would not currently compile. Its shape below is inferred
+ *   from that exact builder call, so treat the field list as reliable, but
+ *   the endpoints themselves as not yet runnable until that class is
+ *   restored.
+ *   { id, name, email, referralCode, referralLink, commissionPercentage,
+ *     status (ACTIVE|INACTIVE), referredCustomers, revenueAmountMinor,
+ *     commissionAmountMinor, createdAt, updatedAt }
+ *   Note there's a single commissionAmountMinor total — no
+ *   pending/paid/reversed breakdown per partner (that split only exists
+ *   per-conversion, via payoutStatus).
+ * - ReferralConversionResponse (admin conversions list) does NOT include
+ *   payoutStatus, paidAt, payoutReference, or payoutNote — only the
+ *   conversion's own EARNED/REVERSED status. PartnerDetailModal.jsx can't
+ *   show a payout-status column from this endpoint; it's noted inline.
+ * - UpdateReferralPayoutRequest is a real record: { status, payoutReference,
+ *   payoutNote }, status one of ReferralPayoutStatus (PENDING|PAID|
+ *   REVERSED). BUT no controller method in ReferralAdminController maps
+ *   PUT /partners/../conversions/../payout (or any other path) to
+ *   ReferralPayoutService.updatePayoutStatus — the service exists, nothing
+ *   calls it. updatePayout below is wired to the path this system's own
+ *   spec names, matching UpdateReferralPayoutRequest's field names exactly,
+ *   and will 404 until that controller method is added.
+ * - invitePartner is real and returns ReferralInvitationResponse
+ *   { id, email, invitationUrl, expiresAt, accepted } UNWRAPPED (no `data`
+ *   envelope) — request() handles this automatically.
+ */
+export const referralAdmin = {
+  listPartners: () => request(`/api/admin/referrals/partners`, { auth: true }),
+
+  createPartner: ({ name, email, referralCode, commissionPercentage }) =>
+    // email is genuinely optional server-side (CreateReferralPartnerRequest
+    // has no @NotBlank on it) — only omit the key when blank, don't send "".
+    request(`/api/admin/referrals/partners`, {
+      method: "POST",
+      auth: true,
+      body: {
+        name,
+        ...(email ? { email } : {}),
+        referralCode,
+        commissionPercentage,
+      },
+    }),
+
+  getPartner: (id) =>
+    request(`/api/admin/referrals/partners/${id}`, { auth: true }),
+
+  // referralCode is deliberately not accepted here — UpdateReferralPartnerRequest
+  // has no field for it, and ReferralAdminService never touches
+  // partner.referralCode after creation.
+  updatePartner: (id, { name, email, commissionPercentage, status }) =>
+    request(`/api/admin/referrals/partners/${id}`, {
+      method: "PUT",
+      auth: true,
+      body: { name, email, commissionPercentage, status },
+    }),
+
+  listPartnerConversions: (id) =>
+    request(`/api/admin/referrals/partners/${id}/conversions`, {
+      auth: true,
+    }),
+
+  // ReferralAdminSummaryResponse: { totalPartners, activePartners,
+  // referredCustomers, totalConversions, totalRevenueAmountMinor,
+  // totalCommissionEarnedAmountMinor, totalCommissionPendingAmountMinor,
+  // totalCommissionPaidAmountMinor, totalCommissionReversedAmountMinor }.
+  // No currency field — ReferralPartners.jsx defaults to USD for display.
+  getSummary: () => request(`/api/admin/referrals/summary`, { auth: true }),
+
+  // NOT WIRED SERVER-SIDE YET — see the file banner above. status is one of
+  // the real ReferralPayoutStatus values: "PENDING" | "PAID" | "REVERSED".
+  updatePayout: (conversionId, { status, payoutReference, payoutNote }) =>
+    request(`/api/admin/referrals/conversions/${conversionId}/payout`, {
+      method: "PUT",
+      auth: true,
+      body: { status, payoutReference, payoutNote },
+    }),
+
+  invitePartner: (id) =>
+    request(`/api/admin/referrals/partners/${id}/invitation`, {
+      method: "POST",
+      auth: true,
+    }),
+};
+
+/* --------------------- partner auth — verified 2026-09-27 --------------------
+ * Partners are NOT a separate authentication principal: PartnerAuthService
+ * (accept-invitation) creates a plain `User` row with role Role.PARTNER,
+ * and PartnerDashboardController reads `(User) authentication.getPrincipal()`
+ * — the exact same JWT/principal every other authenticated endpoint uses.
+ * So partner sign-in is just the existing auth.logIn() below (see
+ * PartnerSignIn.jsx) — there is no POST /api/partner/auth/login anywhere in
+ * the backend, and adding a second one here would be inventing a
+ * duplicate auth system this codebase explicitly doesn't have.
+ *
+ * acceptInvitation is the one real gap: SecurityConfig already whitelists
+ * POST /api/partner/auth/accept-invitation as public (so the intent is
+ * clearly there), and PartnerAuthService.acceptInvitation(token, password)
+ * fully implements the logic — but no @RestController maps that path to
+ * it anywhere in the uploaded source. This call is wired to the path
+ * SecurityConfig already reserves for it and will 404 until that one
+ * @PostMapping is added backend-side.
+ */
+export const partnerAuth = {
+  acceptInvitation: (token, password) =>
+    request(`/api/partner/auth/accept-invitation`, {
+      method: "POST",
+      body: { token, password },
+    }),
+};
+
+/* -------------------- partner portal — verified 2026-09-27 -------------------
+ * PartnerDashboardController, gated by SecurityConfig on
+ * hasRole("PARTNER") — same staff token as everything else (auth: true),
+ * never a partnerId param; the backend derives the partner from
+ * `(User) authentication.getPrincipal()`.
+ *
+ * getDashboard -> PartnerDashboardResponse: { partnerName, email,
+ * referralCode, referralLink, referredCustomers, conversions,
+ * pendingConversions, reversedConversions, revenueAmountMinor,
+ * commissionEarnedAmountMinor, commissionPendingAmountMinor,
+ * commissionPaidAmountMinor, commissionReversedAmountMinor, currency }.
+ *
+ * getConversions -> PartnerConversionResponse[]: { id, workspaceId, product,
+ * revenueAmountMinor, currency, commissionPercentage, commissionAmountMinor,
+ * conversionStatus (EARNED|REVERSED), payoutStatus (PENDING|PAID|
+ * REVERSED), createdAt, paidAt, payoutReference } — no payoutNote here.
+ *
+ * getProfile -> ReferralPartnerProfileResponse: { id, name, email,
+ * referralCode, referralLink, commissionPercentage, status } — identity
+ * only, no stats; the backend gives the partner nothing to edit on any of
+ * these fields, so the frontend shows them read-only.
+ */
+export const partnerPortal = {
+  getDashboard: () =>
+    request(`/api/partner/referrals/dashboard`, { auth: true }),
+
+  getConversions: () =>
+    request(`/api/partner/referrals/conversions`, { auth: true }),
+
+  getProfile: () =>
+    request(`/api/partner/referrals/profile`, { auth: true }),
 };
 
 /* ---------------------------------- board ----------------------------------- */

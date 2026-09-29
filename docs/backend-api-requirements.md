@@ -232,3 +232,192 @@ this reflects the actual running application) throws
 boot at all. See `BACKEND_FIXES.md` for detail — this is a guess based on
 standard Spring behavior, not a verified runtime observation, since this
 session cannot run the backend.
+
+## 15. ~~Referral / partner tracking — per-workspace design~~ — SUPERSEDED, see #16
+
+**Superseded 2026-09-27** — the real backend was uploaded and inspected
+directly (`com.amsal.fidmap.referral.*`, `SecurityConfig.java`). Referral
+tracking is NOT per-workspace: it's a platform-wide system, gated by two
+real roles (`SUPER_ADMIN`, `PARTNER`) that this section didn't know about.
+`GET/POST /api/referral-partners/workspace/{workspaceId}` — the whole
+contract this section describes — does not exist anywhere in the backend
+and never will under this design; the Settings > Referrals tab and
+`CreateReferralPartnerModal.jsx` built against it have been deleted. See
+#16 for the real, verified contract. Left below for history only.
+
+<details>
+<summary>Original (incorrect) write-up</summary>
+
+The frontend now captures `?ref=CODE` first-touch (`utils/referral.js`,
+`localStorage["fidmap_referral_code"]`) and, when present, adds it to the
+existing registration request. No backend change was made — this is the
+contract the backend needs to support:
+
+**1. Registration request gains an optional field.**
+`POST /auth/sign-in` (`MultiStepForm.jsx`'s call, despite the path name
+this is registration, not login — see `Api.js`'s `auth.register` comment)
+now sometimes sends a third top-level field alongside the existing
+`firstUser` / `dto`:
+
+```json
+{
+  "firstUser": { "fullName": "...", "email": "...", "password": "..." },
+  "dto": { "name": "..." },
+  "referralCode": "KAMAL"
+}
+```
+
+`referralCode` is a string, `[A-Za-z0-9_-]{2,40}`, and is **omitted
+entirely** (not sent as `null` or `""`) when the visitor arrived without a
+`?ref=` link. The backend's registration DTO needs an optional
+`referralCode` field it can safely ignore/store; existing registrations
+with no such field must keep working exactly as they do today (the
+frontend already guarantees this by omitting the key rather than sending
+an empty one).
+
+**2. Two new endpoints for the admin UI** (Settings > Referrals,
+`SettingsReferrals.jsx`), staff-authenticated, OWNER-only (matching
+Team's authorization), workspace-scoped like `boards`/`users`:
+
+- `GET /api/referral-partners/workspace/{workspaceId}` → list of:
+  ```json
+  { "id": "...", "name": "...", "code": "...", "clickCount": 0,
+    "signupCount": 0, "conversionCount": 0, "createdAt": "..." }
+  ```
+- `POST /api/referral-partners/workspace/{workspaceId}` body
+  `{ "name": "...", "code": "..." }` → creates a partner, returns the
+  same shape as above. Code uniqueness (globally, since it's read back out
+  of a shared `?ref=` URL space) should be enforced server-side; the
+  frontend only validates the character pattern client-side.
+
+Neither endpoint exists in the backend today — see `Api.js`'s
+`referralPartners` export, which calls exactly these paths and is
+commented as not-yet-implemented. `SettingsReferrals.jsx` treats a 404
+from the list call as "not implemented yet" (a calm notice, not an error
+banner) so the tab doesn't look broken until these ship.
+
+What "conversion" means (paid vs. any signup) and how clicks are counted
+(a `?ref=` page view, vs. only a stored/first-touch one) are backend/product
+decisions not made here — the frontend just displays whatever numbers
+`GET /api/referral-partners/workspace/{workspaceId}` returns per partner.
+
+No new environment variables are required — the partner referral link
+(`fidmap.co/?ref=CODE`) reuses the existing `VITE_ROOT_DOMAIN`, the same
+variable `SettingsProfile.jsx` already uses for the public portal link.
+
+</details>
+
+## 16. Referral / partner tracking — verified against real backend source
+
+Unlike #15, this reflects the actual `com.amsal.fidmap.referral.*` package
+and `SecurityConfig.java` from the backend zip uploaded 2026-09-27 — read
+directly, not guessed.
+
+**Registration** — fixed a real bug: `referralCode` was being sent as a
+top-level sibling of `firstUser`/`dto`. The real DTO
+(`AddFirstUser.java`, what `firstUser` deserializes into) has the field
+directly on it:
+
+```json
+{
+  "firstUser": {
+    "fullName": "...", "email": "...", "password": "...",
+    "referralCode": "KAMAL"
+  },
+  "dto": { "name": "..." }
+}
+```
+
+`AuthenticationService.createFirstUserAndWorkspace` already calls
+`referralService.attributeWorkspace(...)` — confirmed wired end to end,
+first-touch, on the backend side too.
+
+**Roles** — `Role.java` has `SUPER_ADMIN, OWNER, ADMIN, MEMBER, PARTNER`.
+`SUPER_ADMIN` is a real platform-operator role, distinct from a workspace
+`OWNER`; `PARTNER` means the `User` *is* a referral partner — there is no
+separate partner-authentication system. `SecurityConfig` gates
+`/api/admin/referrals/**` on `hasRole("SUPER_ADMIN")` and
+`/api/partner/referrals/**` on `hasRole("PARTNER")`.
+
+**Confirmed working endpoints** (`ReferralAdminController`, wrapped in the
+standard `{success,message,data}` envelope):
+- `POST /api/admin/referrals/partners` — `CreateReferralPartnerRequest {
+  name (required), email (optional), referralCode (required, 2-50 chars),
+  commissionPercentage (required, 0-100) }`
+- `GET /api/admin/referrals/partners`, `GET .../partners/{id}`
+- `PUT /api/admin/referrals/partners/{id}` — `UpdateReferralPartnerRequest
+  { name?, email?, commissionPercentage?, status? }`. No `referralCode`
+  field — immutable by design.
+- `GET /api/admin/referrals/partners/{id}/conversions`
+- `GET /api/admin/referrals/summary`
+- `POST /api/admin/referrals/partners/{id}/invitation` — returns
+  `ReferralInvitationResponse` **unwrapped** (no envelope); builds the
+  link as `https://app.fidmap.co/partner/accept-invitation?token=...`
+  itself.
+
+`PartnerDashboardController` (`/api/partner/referrals/**`, also
+unwrapped, partner identity from `(User) authentication.getPrincipal()`,
+never a client-supplied id):
+- `GET /dashboard` → `PartnerDashboardResponse { partnerName, email,
+  referralCode, referralLink, referredCustomers, conversions,
+  pendingConversions, reversedConversions, revenueAmountMinor,
+  commissionEarnedAmountMinor, commissionPendingAmountMinor,
+  commissionPaidAmountMinor, commissionReversedAmountMinor, currency }`
+- `GET /conversions` → `PartnerConversionResponse[] { id, workspaceId,
+  product, revenueAmountMinor, currency, commissionPercentage,
+  commissionAmountMinor, conversionStatus (EARNED|REVERSED), payoutStatus
+  (PENDING|PAID|REVERSED), createdAt, paidAt, payoutReference }`
+- `GET /profile` → `ReferralPartnerProfileResponse { id, name, email,
+  referralCode, referralLink, commissionPercentage, status }` — identity
+  only, no stats.
+
+**Confirmed gaps** (real, not guessed — each verified by grepping the
+whole uploaded source):
+1. **`ReferralPartnerResponse.java` doesn't exist.** Every
+   `ReferralAdminController`/`ReferralAdminService` method returns or
+   builds one via `.builder()`, so the backend as uploaded won't compile.
+   Its shape is fully inferable from that builder call — `{ id, name,
+   email, referralCode, referralLink, commissionPercentage, status,
+   referredCustomers, revenueAmountMinor, commissionAmountMinor,
+   createdAt, updatedAt }` — a single `commissionAmountMinor` total, no
+   pending/paid/reversed split per partner (that only exists
+   per-conversion). `Api.js`'s `referralAdmin` group is written to this
+   inferred shape.
+2. **No payout endpoint.** `ReferralPayoutService.updatePayoutStatus`
+   fully implements the logic (including the two real business rules: a
+   `REVERSED` conversion can't be marked `PAID`, and a zero-value
+   commission can't be paid) and `UpdateReferralPayoutRequest` is a real
+   record — but no controller method calls it. `referralAdmin.updatePayout`
+   is wired to `PUT /api/admin/referrals/conversions/{id}/payout`
+   (matching the request record's field names exactly) and will 404 until
+   that one `@PutMapping` is added.
+3. **No partner-login or accept-invitation controller.**
+   `PartnerAuthService.acceptInvitation(token, password)` fully implements
+   the logic (creates a `User` with `role=PARTNER`, links the
+   `ReferralPartner`, marks the invitation accepted) and
+   `SecurityConfig` already whitelists `POST
+   /api/partner/auth/accept-invitation` as public — so the intent is
+   clearly there — but no `@RestController` maps any path to that method.
+   There's also no login method on `PartnerAuthService` at all, and no
+   whitelisting for a `/api/partner/auth/login` path anywhere — confirming
+   partner sign-in is meant to reuse the existing `/auth/log-in` (a
+   partner is just a `User`), not a second endpoint. `PartnerSignIn.jsx`
+   is built accordingly (reuses `useAuth().login`); `AcceptInvitation.jsx`
+   calls the reserved-but-unimplemented path and will 404 until it exists.
+4. **Admin conversions response has no payout fields.**
+   `ReferralConversionResponse` (the admin-side one, `GET
+   .../partners/{id}/conversions`) has no `payoutStatus`, `paidAt`,
+   `payoutReference`, or `payoutNote` — only the conversion's own
+   `EARNED`/`REVERSED` status. `PartnerDetailModal.jsx` can't show a
+   payout-status column from this endpoint and says so inline; the
+   "Update payout" action is still wired (by conversion id) since the
+   write endpoint doesn't depend on the read shape.
+5. **`ReferralAdminSummaryResponse` has no currency field.** `totalPartners,
+   activePartners, referredCustomers, totalConversions,
+   totalRevenueAmountMinor, totalCommissionEarnedAmountMinor,
+   totalCommissionPendingAmountMinor, totalCommissionPaidAmountMinor,
+   totalCommissionReversedAmountMinor` only — `ReferralPartners.jsx`
+   formats these as USD (the only currency `ReferralService` ever
+   defaults to elsewhere in the codebase).
+
+No new environment variables are required.

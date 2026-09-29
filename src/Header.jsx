@@ -22,7 +22,7 @@ import { useAuth } from "./hooks/useAuth";
 const Header = () => {
   const { boardId } = useParams();
   const location = useLocation();
-  const { isStaff, logout } = useAuth();
+  const { isStaff, currentUser, logout } = useAuth();
 
   const isPortal = location.pathname.startsWith("/p/");
 
@@ -59,6 +59,11 @@ const Header = () => {
         ["/boards", "Boards"],
         ["/roadmap", "Roadmap"],
         ["/changelog", "Changelog"],
+        // SUPER_ADMIN is a real platform role (Role.java), distinct from a
+        // workspace OWNER — see ReferralPartners.jsx's own file banner.
+        ...(currentUser?.role === "SUPER_ADMIN"
+          ? [["/admin/referrals", "Partners"]]
+          : []),
       ]
     : [];
 

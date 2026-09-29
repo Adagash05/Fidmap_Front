@@ -8,6 +8,7 @@ import { billing as billingApi } from "../../components/Api";
 import { openEmbeddedCheckout } from "../../utils/checkout";
 import { waitForSubscriptionSync } from "../../utils/billingSync";
 import { trackEvent } from "../../utils/analytics";
+import { getReferralCode, clearReferralCode } from "../../utils/referral";
 import {
   planKeyFromBillingPlan,
   intervalFromBillingPlan,
@@ -68,11 +69,23 @@ const MultiStepForm = () => {
     setError(null);
 
     try {
+      // First-touch referral code captured from an earlier ?ref=CODE
+      // visit, if any — see utils/referral.js. Omitted entirely (not
+      // sent as null/empty) when there isn't one, so this request is
+      // byte-for-byte the same as before for the common no-referral
+      // case. Nested inside `firstUser`, not top-level — verified
+      // against the real backend: AddFirstUser.java (the type
+      // `firstUser` deserializes into) has the referralCode field
+      // directly on it, not CreateFirstUserRequest. See
+      // docs/backend-api-requirements.md #16.
+      const referralCode = getReferralCode();
+
       const requestData = {
         firstUser: {
           fullName: currentFormData.fullName,
           email: currentFormData.email,
           password: currentFormData.password,
+          ...(referralCode ? { referralCode } : {}),
         },
         dto: {
           name: currentFormData.name,
@@ -80,6 +93,11 @@ const MultiStepForm = () => {
       };
 
       const result = await register(requestData);
+
+      // The stored code has now been attributed to this signup — clear
+      // it so it isn't also (mis)applied to some later signup in the
+      // same browser (e.g. a second workspace).
+      if (referralCode) clearReferralCode();
 
       // Registration succeeded regardless of what happens next — a
       // checkout failure here must not strand the user outside the app.
