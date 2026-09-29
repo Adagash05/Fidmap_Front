@@ -271,7 +271,9 @@ code:where(:not(.fm-marketing *)) {
   border-color: var(--fm-danger);
   color: #fff;
 }
-.fm-btn-primary.fm-btn-danger:where(:not(.fm-marketing *)):hover:not(:disabled) {
+.fm-btn-primary.fm-btn-danger:where(:not(.fm-marketing *)):hover:not(
+    :disabled
+  ) {
   background: var(--fm-danger-dark);
   border-color: var(--fm-danger-dark);
 }
@@ -654,7 +656,10 @@ code:where(:not(.fm-marketing *)) {
   top: 6px;
   bottom: -34px;
   width: 1px;
-  background-image: linear-gradient(var(--fm-border-strong) 60%, transparent 0%);
+  background-image: linear-gradient(
+    var(--fm-border-strong) 60%,
+    transparent 0%
+  );
   background-size: 1px 8px;
   background-repeat: repeat-y;
 }
@@ -1791,7 +1796,6 @@ button.fm-dash-update:hover {
    ========================================================= */
 
 .fm-marketing {
-
   /*  Palette tokens now live on :root (same values). The legacy tokens below are frozen at their
      original values so the marketing site's older rules and inline styles render exactly as before.  */
 
@@ -1871,7 +1875,7 @@ button.fm-dash-update:hover {
   gap: 8px;
 
   background: var(--fidmap-blue);
-  color: #000 !important;
+  color: #fff !important;
 
   border: 1px solid var(--fidmap-blue);
   border-radius: 9px;
