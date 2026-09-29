@@ -25,8 +25,13 @@ const Login = () => {
     setError(null);
 
     try {
-      await login(email, password);
-      navigate(redirectTo, { replace: true });
+      const result = await login(email, password);
+
+      if (result?.user?.role === "PARTNER") {
+        navigate("/partner/dashboard", { replace: true });
+      } else {
+        navigate(redirectTo, { replace: true });
+      }
     } catch (err) {
       setError(err);
     } finally {
@@ -36,7 +41,12 @@ const Login = () => {
 
   return (
     <div className="fm-auth-page">
-      <Seo title="Sign in" description="Sign in to FIDMAP." path="/sign-in" noIndex />
+      <Seo
+        title="Sign in"
+        description="Sign in to FIDMAP."
+        path="/sign-in"
+        noIndex
+      />
       <Link
         to="/"
         className="fm-brand fm-auth-brand"
