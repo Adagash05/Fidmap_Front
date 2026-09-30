@@ -1545,13 +1545,26 @@ button.fm-dash-update:hover {
   border-radius: 100px;
 }
 
-.fm-mkt-pricing-grid {
+/* THE ORIGINAL GRID */
+
+/* .fm-mkt-pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   text-align: left;
   max-width: 980px;
   margin: 0 auto;
+} */
+
+/* TEMPORARY GRID */
+.fm-mkt-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  /* text-align: left; */
+  max-width: 680px;
+  margin: 0 auto;
+  gap: 3rem;
 }
 @media (max-width: 860px) {
   .fm-mkt-pricing-grid {

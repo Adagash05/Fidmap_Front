@@ -136,7 +136,8 @@ const Marketing = () => {
         <nav className="fm-mkt-nav-links">
           <Link to="/customer-feedback">Product</Link>
           <Link to="/blog">Blog</Link>
-          <a href="#pricing">Pricing</a>
+          <Link to="/pricing">Pricing</Link>
+          {/* <a href="#pricing">Pricing</a> */}
           <a href="https://app.fidmap.co/sign-in">Sign in</a>
 
           <a

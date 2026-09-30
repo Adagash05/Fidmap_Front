@@ -77,29 +77,29 @@ export const PLANS = [
     recommended: true,
   },
 
-  {
-    key: "LIFETIME",
-    name: "Lifetime Deal",
+  // {
+  //   key: "LIFETIME",
+  //   name: "Lifetime Deal",
 
-    // Lifetime is a one-time purchase.
-    monthly: null,
-    yearly: null,
-    price: 49,
+  //   // Lifetime is a one-time purchase.
+  //   monthly: null,
+  //   yearly: null,
+  //   price: 49,
 
-    // Actual backend BillingPlan value
-    plan: "LIFETIME",
+  //   // Actual backend BillingPlan value
+  //   plan: "LIFETIME",
 
-    tagline: "Pay once. Keep FIDMAP for life. Founding pricing won't last.",
+  //   tagline: "Pay once. Keep FIDMAP for life. Founding pricing won't last.",
 
-    features: [
-      "Everything in Business",
-      "Lifetime access",
-      "All future improvements",
-      "No recurring billing, ever",
-      "Founding customer price: $49",
-      "Lock in $49 before the price increases",
-    ],
-  },
+  //   features: [
+  //     "Everything in Business",
+  //     "Lifetime access",
+  //     "All future improvements",
+  //     "No recurring billing, ever",
+  //     "Founding customer price: $49",
+  //     "Lock in $49 before the price increases",
+  //   ],
+  // },
 ];
 
 export const TRIAL_DAYS = 7;
