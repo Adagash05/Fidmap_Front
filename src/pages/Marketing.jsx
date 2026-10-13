@@ -690,12 +690,13 @@ const Marketing = () => {
             <Link to="/feature-request-management">Feature Requests</Link>
             <Link to="/feedback-board">Feedback Board</Link>
             <Link to="/pricing">Pricing</Link>
+            <Link to="/exclusive-deal">Exclusive Deal</Link>
           </div>
 
           <div>
             <div className="fm-mkt-footer-heading fm-mono">Support</div>
             <Link to="/resources">Resources</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/contact">Contact Us</Link>
             <Link to="/about">About</Link>
           </div>
 

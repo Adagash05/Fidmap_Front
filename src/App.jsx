@@ -30,6 +30,7 @@ import Pricing from "./pages/Pricing.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import Resources from "./pages/Resources.jsx";
+import ExclusiveDeal from "./pages/Exclusive-temp.jsx";
 import CustomerFeedback from "./pages/Product/CustomerFeedback.jsx";
 import FeatureRequestManagement from "./pages/Product/FeatureRequestManagement.jsx";
 import FeedbackBoard from "./pages/Product/FeedbackBoard.jsx";
@@ -208,6 +209,7 @@ export default function App() {
 
       {/* SEO / content pages */}
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/exclusive-deal" element={<ExclusiveDeal />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/resources" element={<Resources />} />
