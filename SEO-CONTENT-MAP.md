@@ -62,3 +62,7 @@ reach them anyway, so no noindex meta was added)
   a blog post requires updating both files by hand.
 - No per-domain `robots.txt` for `app.fidmap.co` (one static build serves
   all domains) — mitigated with per-page `noindex` meta instead.
+
+---
+## Update 2026-10
+New indexable routes: `/how-it-works`, `/alternatives/uservoice`, `/alternatives/productboard` (plus the existing Canny and Frill pages, rewritten from `docs/COMPETITOR_RESEARCH.md`). Home title/description and headline ("Know what to build next.") changed. Utility pages (`/survey/:id`, `/unsubscribe`, `/accept-invite`) are `noindex`. All are listed in `public/sitemap.xml` where indexable.

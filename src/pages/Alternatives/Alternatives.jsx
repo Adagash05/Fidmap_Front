@@ -7,7 +7,7 @@ const Alternatives = () => (
   <MarketingLayout>
     <Seo
       title="FIDMAP Alternatives Comparisons"
-      description="See how FIDMAP compares to other customer feedback and feature request tools like Canny and Frill."
+      description="See how FIDMAP compares to other customer feedback and feature request tools like Canny, Frill, UserVoice and Productboard."
       path="/alternatives"
     />
 
@@ -27,6 +27,12 @@ const Alternatives = () => (
         </li>
         <li>
           <Link to="/alternatives/frill">FIDMAP vs. Frill</Link>
+        </li>
+        <li>
+          <Link to="/alternatives/uservoice">FIDMAP vs. UserVoice</Link>
+        </li>
+        <li>
+          <Link to="/alternatives/productboard">FIDMAP vs. Productboard</Link>
         </li>
       </ul>
     </section>

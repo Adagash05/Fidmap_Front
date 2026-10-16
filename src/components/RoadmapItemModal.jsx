@@ -10,6 +10,11 @@ import { ROADMAP_STATUS } from "../constants/STATUS";
  * feedback-linking — the backend's update endpoint doesn't accept
  * feedbackPost, only create does, see RoadmapItemController). `item`
  * absent => create mode (POST, feedback-linking available).
+ *
+ * The target date is offered and SENT in both modes. (Root cause of the
+ * "date not saved on create" bug: the create form never rendered the field
+ * and Api.roadmapItems.create never sent it.) It is a plain yyyy-MM-dd
+ * calendar date, so no timezone conversion can shift it.
  */
 const RoadmapItemModal = ({ item, onClose, onSubmit }) => {
   const isEdit = Boolean(item);
@@ -43,6 +48,7 @@ const RoadmapItemModal = ({ item, onClose, onSubmit }) => {
           title: title.trim(),
           description: description.trim(),
           status,
+          targetDate: targetDate || null,
           feedbackPostIds: relatedFeedback.map((f) => f.id),
         });
       }
@@ -107,17 +113,15 @@ const RoadmapItemModal = ({ item, onClose, onSubmit }) => {
               </select>
             </div>
 
-            {isEdit && (
-              <div className="fm-field">
-                <label htmlFor="ri-target">Target date</label>
-                <input
-                  id="ri-target"
-                  type="date"
-                  value={targetDate || ""}
-                  onChange={(e) => setTargetDate(e.target.value)}
-                />
-              </div>
-            )}
+            <div className="fm-field">
+              <label htmlFor="ri-target">Target date (optional)</label>
+              <input
+                id="ri-target"
+                type="date"
+                value={targetDate || ""}
+                onChange={(e) => setTargetDate(e.target.value)}
+              />
+            </div>
           </div>
 
           {!isEdit && (

@@ -29,12 +29,13 @@ const MarketingLayout = ({ children }) => (
 
       <nav className="fm-mkt-nav-links">
         <Link to="/customer-feedback">Product</Link>
+        <Link to="/how-it-works">How it works</Link>
         <Link to="/pricing">Pricing</Link>
         <Link to="/blog">Blog</Link>
         <Link to="/alternatives">Compare</Link>
         <a href={`${APP_URL}/sign-in`}>Sign in</a>
         <a href={`${APP_URL}/register`} className="fm-btn-primary">
-          Start free trial
+          Start your free trial
         </a>
       </nav>
     </header>
@@ -63,6 +64,8 @@ const MarketingLayout = ({ children }) => (
           <div className="fm-mkt-footer-heading fm-mono">Switch</div>
           <Link to="/alternatives/canny">Canny Alternative</Link>
           <Link to="/alternatives/frill">Frill Alternative</Link>
+          <Link to="/alternatives/productboard">Prouctboard Alternative</Link>
+          <Link to="/alternatives/uservoice">UserVoice Alternative</Link>
         </div>
 
         <div>

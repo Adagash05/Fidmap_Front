@@ -7,6 +7,7 @@ import CreateUserModal from "../../components/CreateUserModal";
 import EditUserModal from "../../components/EditUserModal";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import PlanLimitNotice from "../../components/PlanLimitNotice";
+import TeamInvitations from "./TeamInvitations";
 import { users as usersApi } from "../../components/Api";
 import { useAuth } from "../../hooks/useAuth";
 import {
@@ -210,6 +211,11 @@ const SettingsTeam = ({ workspaceId }) => {
           ))}
         </div>
       )}
+
+      <TeamInvitations
+        workspaceId={workspaceId}
+        isOwner={currentUser?.role === "OWNER"}
+      />
 
       {showCreate && (
         <CreateUserModal

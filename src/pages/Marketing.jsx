@@ -118,8 +118,8 @@ const Marketing = () => {
   return (
     <div className="fm-marketing">
       <Seo
-        title="FIDMAP — Customer Feedback & Feature Request Software"
-        description="Collect customer feedback, let customers vote on feature requests, prioritize what matters, and share your product roadmap."
+        title="FIDMAP — Know what to build next | Customer feedback to decisions"
+        description="FIDMAP turns customer feedback, votes and surveys into explained priority scores and decision briefs, then moves the winners onto a public roadmap and tells the customers who asked."
         path="/"
         jsonLd={jsonLd}
       />
@@ -144,7 +144,7 @@ const Marketing = () => {
             href={withReferralParam("https://app.fidmap.co/register")}
             className="fm-btn-primary fm-nav-cta"
           >
-            Start free trial
+            Start your free trial
           </a>
         </nav>
       </header>
@@ -154,18 +154,18 @@ const Marketing = () => {
         <section className="fm-mkt-hero fm-hero-new">
           <div className="fm-hero-badge">
             <span className="fm-live-dot" />
-            Customer feedback, finally organized
+            From customer feedback to a decision you can defend
           </div>
 
           <h1 className="fm-display fm-mkt-h1">
-            Your customers tell you
-            <span> what to build.</span>
+            Know what
+            <span> to build next.</span>
           </h1>
 
           <p className="fm-mkt-sub fm-hero-description">
-            FIDMAP helps SaaS teams collect customer feedback, manage feature
-            requests, prioritize what matters, and share their product roadmap
-            with customers.
+            FIDMAP turns customer requests, votes and survey answers into an
+            explained priority score and a decision brief, then puts what you
+            choose on a public roadmap and tells the customers who asked.
           </p>
 
           <div className="fm-mkt-cta-row">
@@ -173,11 +173,11 @@ const Marketing = () => {
               href={withReferralParam("https://app.fidmap.co/register")}
               className="fm-btn-primary fm-btn-large"
             >
-              Start free trial
+              Start your free trial
               <ArrowRight size={16} />
             </a>
 
-            <a href="#product-demo" className="fm-btn-ghost fm-btn-large">
+            <a href="#how-it-works" className="fm-btn-ghost fm-btn-large">
               See how it works
               <ChevronRight size={16} />
             </a>
@@ -200,7 +200,7 @@ const Marketing = () => {
 
           <h2 className="fm-display fm-mkt-h2">
             Turn scattered feedback into
-            <span className="fm-blue-text"> a clear product roadmap.</span>
+            <span className="fm-blue-text"> decisions you can explain.</span>
           </h2>
 
           <p className="fm-section-description">
@@ -491,6 +491,62 @@ const Marketing = () => {
         </section> */}
 
         {/* VALUE PROPOSITION */}
+        <section id="how-it-works" className="fm-value-section">
+          <div className="fm-section-eyebrow">
+            <Lightbulb size={14} />
+            How FIDMAP helps you decide
+          </div>
+
+          <h2 className="fm-display fm-mkt-h2">
+            Evidence in. An explained recommendation out.
+          </h2>
+
+          <p className="fm-section-description">
+            Counting votes is not a decision. FIDMAP combines distinct
+            supporters, linked survey answers, recent activity and your own
+            urgency and strategic-fit ratings into a score, and shows you
+            exactly why a request scored the way it did.
+          </p>
+
+          <div className="fm-value-grid">
+            <ValueCard
+              icon={<ThumbsUp />}
+              title="Score with evidence"
+              text="Every request gets a score with a visible range and a confidence level. Signals you have not provided are left out, not guessed."
+            />
+
+            <ValueCard
+              icon={<Lightbulb />}
+              title="Decision briefs"
+              text="See the evidence, the score breakdown and the recommendation in one place, then record your decision and your reason. Overrides are kept on record."
+            />
+
+            <ValueCard
+              icon={<MessageSquare />}
+              title="Surveys as evidence"
+              text="Ask customers directly and link the answers to a request, so a decision rests on more than votes."
+            />
+
+            <ValueCard
+              icon={<Sparkles />}
+              title="Merge duplicates"
+              text="FIDMAP suggests likely duplicates for you to review. Merging moves the votes without counting anyone twice."
+            />
+
+            <ValueCard
+              icon={<Map />}
+              title="One step to the roadmap"
+              text="Turn a decision into a roadmap item with a target date. The request stays linked to it."
+            />
+
+            <ValueCard
+              icon={<Megaphone />}
+              title="Tell the people who asked"
+              text="Supporters can get an email when a request or its roadmap item changes status, with a one-click unsubscribe."
+            />
+          </div>
+        </section>
+
         <section className="fm-value-section">
           <div className="fm-section-eyebrow">
             <Lightbulb size={14} />
@@ -577,8 +633,8 @@ const Marketing = () => {
 
               <ProcessStep
                 number="03"
-                title="You prioritize"
-                text="Turn the strongest requests into roadmap items."
+                title="You decide"
+                text="Review the explained score, record your decision, and turn the strongest requests into roadmap items."
               />
 
               <ProcessStep
@@ -627,7 +683,7 @@ const Marketing = () => {
         </section>
 
         {/* PRICING */}
-        <MarketingPricing id="pricing" />
+        {/* <MarketingPricing id="pricing" /> */}
 
         {/* FINAL CTA */}
         <section className="fm-mkt-final-cta">
@@ -704,6 +760,8 @@ const Marketing = () => {
             <div className="fm-mkt-footer-heading fm-mono">Compare</div>
             <Link to="/alternatives/canny">Canny Alternative</Link>
             <Link to="/alternatives/frill">Frill Alternative</Link>
+            <Link to="/alternatives/productboard">Prouctboard Alternative</Link>
+            <Link to="/alternatives/uservoice">UserVoice Alternative</Link>
           </div>
 
           <div>

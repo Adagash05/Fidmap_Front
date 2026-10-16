@@ -227,6 +227,11 @@ const StaffDashboard = () => {
             </h1>
             <p className="fm-dash-sub">Here's what's happening across your workspace.</p>
           </div>
+          <div className="fm-dash-hero-actions">
+            <Link to="/priorities" className="fm-btn-primary">
+              What should we build next?
+            </Link>
+          </div>
         </section>
 
         <ErrorBanner error={feedbackError} />

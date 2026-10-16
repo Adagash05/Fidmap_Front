@@ -45,6 +45,10 @@ export const PLANS = [
       "Up to 5,000 end users",
       "Up to 100 roadmap items",
       "Up to 100 changelog entries",
+      "Evidence-based priority scores and decision briefs",
+      "Surveys linked to feedback requests",
+      "Duplicate detection with review and merge",
+      "Email updates to people who asked",
     ],
   },
 

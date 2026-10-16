@@ -1,107 +1,72 @@
-import { ArrowRight } from "lucide-react";
+import ComparisonPage from "./ComparisonPage";
 
-import MarketingLayout from "../../layouts/MarketingLayout";
-import Seo from "../../components/Seo";
-import { APP_URL } from "../../constants/pricing";
-
-/*
- * Frill's pricing/plan details below were verified via live web search
- * (not training-data recall) at the time this page was written. Sources
- * disagreed slightly on exact figures, so numbers are given as
- * approximate ("around") with a link to Frill's own pricing page —
- * treat this the same way as the Canny page: don't assume it stays
- * accurate indefinitely.
- */
+/* Facts: docs/COMPETITOR_RESEARCH.md §2 (frill.co/pricing, checked 2026-10-14). */
 const FrillAlternative = () => (
-  <MarketingLayout>
-    <Seo
-      title="FIDMAP vs. Frill: Customer Feedback Software Comparison"
-      description="A factual comparison of FIDMAP and Frill for collecting customer feedback, running a public roadmap, and announcing releases."
-      path="/alternatives/frill"
-    />
-
-    <section className="fm-mkt-hero">
-      <div className="fm-mkt-eyebrow fm-mono">Frill alternative</div>
-      <h1 className="fm-display fm-mkt-h1">FIDMAP vs. Frill</h1>
-      <p className="fm-mkt-sub">
-        FIDMAP and Frill both cover the core feedback-to-roadmap-to- changelog
-        workflow. Here's how they actually differ.
-      </p>
-    </section>
-
-    <article className="fm-legal" style={{ maxWidth: 760 }}>
-      <h2>What Frill is</h2>
-      <p>
-        Frill (frill.co) is a feedback platform built around three connected
-        pieces: Ideas (a feedback board customers vote and comment on), a public
-        Roadmap, and Announcements (a changelog widget teams can embed to tell
-        users what shipped). Frill also offers NPS/CSAT survey add-ons and a
-        widget for embedding announcements directly in a product.
-      </p>
-
-      <h2>What FIDMAP is</h2>
-      <p>
-        FIDMAP covers the same core loop — feedback boards, voting, comments, a
-        public roadmap, and a changelog — under your own workspace portal.
-        FIDMAP does not currently offer built-in NPS or CSAT surveys.
-      </p>
-
-      <h2>How pricing works</h2>
-      <p>
-        As of this writing, Frill's paid plans start at around $25/month for
-        smaller teams, with higher tiers around $49/month and $149/month as team
-        size and feature needs grow, and a 14-day free trial with no credit card
-        required. Check{" "}
-        <a href="https://frill.co/pricing" target="_blank" rel="noreferrer">
-          Frill's pricing page
-        </a>{" "}
-        for current numbers, since pricing pages change.
-      </p>
-      <p>
-        FIDMAP's plans are priced by tier (Startup, Business) with limits on
-        team members, boards, feedback posts, and end users, plus a one-time
-        Lifetime option — see{" "}
-        <a href={`${APP_URL}/register`}>FIDMAP's own pricing</a> for exact
-        current numbers.
-      </p>
-
-      <h2>Where they overlap</h2>
-      <ul>
-        <li>Public feedback boards ("Ideas" in Frill) customers vote on</li>
-        <li>A public roadmap</li>
-        <li>A changelog/announcements feature for shipped updates</li>
-      </ul>
-
-      <h2>Where they differ</h2>
-      <ul>
-        <li>
-          Frill includes optional NPS/CSAT survey add-ons; FIDMAP is focused on
-          the feedback-board-to-roadmap-to-changelog workflow without built-in
-          surveys.
-        </li>
-        <li>
-          FIDMAP offers a one-time Lifetime plan; Frill's plans are
-          subscription-based.
-        </li>
-      </ul>
-
-      <h2>Who might prefer each</h2>
-      <p>
-        Teams that also want NPS/CSAT surveys alongside feedback management may
-        prefer Frill. Teams that want a focused feedback-to-roadmap-to-changelog
-        tool, including a one-time Lifetime pricing option, may prefer FIDMAP.
-      </p>
-    </article>
-
-    <section className="fm-mkt-final-cta">
-      <h2 className="fm-display fm-mkt-h2">
-        Try FIDMAP free for 7 days – No credit card required
-      </h2>
-      <a href={`${APP_URL}/register`} className="fm-btn-primary">
-        Start free trial <ArrowRight size={14} />
-      </a>
-    </section>
-  </MarketingLayout>
+  <ComparisonPage
+    slug="frill"
+    name="Frill"
+    pricingUrl="https://frill.co/pricing"
+    intro="Frill and FIDMAP both cover feedback, a roadmap and announcements. Frill also lists a priority matrix and surveys, so the difference is less about having these and more about how decisions are made and recorded."
+    whatTheyAre="Frill (frill.co) is a feedback platform with ideas boards, a roadmap and announcements. Its pricing page lists similar-idea detection and smart merge, customizable priority factors, a priority matrix, and surveys (NPS, CSAT, open feedback, quick poll, idea poll)."
+    pricing={
+      <>
+        <p>
+          Frill lists flat monthly plans: Startup $25, Business $49 and Growth
+          $149 per month, an Enterprise plan marked &quot;Talk to sales&quot;,
+          and a 14-day free trial with no credit card required. It lists
+          unlimited teammates and tracked users on all plans, with limits on
+          active ideas (50 on Startup) and surveys (1 on Startup, 3 on
+          Business). We could not see its yearly prices.
+        </p>
+        <p>
+          FIDMAP prices by plan tier, with limits on team members, boards, posts
+          and end users. &quot;Active ideas&quot; and FIDMAP &quot;posts&quot;
+          are not the same unit, so compare features and your own volumes rather
+          than the raw numbers. Frill&apos;s unlimited seats are more generous
+          than FIDMAP&apos;s team-member caps.
+        </p>
+      </>
+    }
+    rows={[
+      ["Public boards, voting and roadmap", "Yes", "Yes"],
+      [
+        "Prioritization",
+        "Evidence-based score with breakdown, range, confidence",
+        "Priority factors and a priority matrix",
+      ],
+      [
+        "Decision on record with rationale",
+        "Yes, including overrides of the recommendation",
+        "Not listed on the page we checked",
+      ],
+      [
+        "Surveys",
+        "Yes, linkable to a request",
+        "Yes, several types; counts limited by plan",
+      ],
+      [
+        "Duplicates",
+        "Suggested pairs you review and merge",
+        "Similar-idea detection and smart merge",
+      ],
+      ["Seats", "Capped per plan", "Unlimited teammates listed"],
+      [
+        "Free trial",
+        "7 days, 14 days, no credit card",
+        "14 days, no credit card",
+      ],
+    ]}
+    fidmapStrengths={[
+      "Every score explains itself and shows how uncertain it is when evidence is missing, and the final human decision is recorded next to it.",
+      "One step from a decision to a roadmap item with a target date, with the request staying linked to it.",
+    ]}
+    theirStrengths={[
+      "Lower listed entry price and a longer no-card trial.",
+      "Unlimited teammates and tracked users on every plan.",
+      "More survey types listed.",
+    ]}
+    whoPrefersWhich="Teams with many seats or that want the lowest entry price and more survey types may prefer Frill. Teams that want each prioritisation call to be explained and recorded may prefer FIDMAP."
+  />
 );
 
 export default FrillAlternative;

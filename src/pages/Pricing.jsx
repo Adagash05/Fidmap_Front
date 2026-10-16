@@ -1,6 +1,7 @@
 import MarketingLayout from "../layouts/MarketingLayout";
 import Seo from "../components/Seo";
 import MarketingPricing from "../components/MarketingPricing";
+import PlanGuide from "../components/PlanGuide";
 import { TRIAL_DAYS } from "../constants/pricing";
 
 /*
@@ -14,7 +15,7 @@ const Pricing = () => (
   <MarketingLayout>
     <Seo
       title="Pricing"
-      description={`FIDMAP pricing: a ${TRIAL_DAYS}-day free trial on Startup, Startup and Business monthly/yearly plans, and a one-time Lifetime plan.`}
+      description={`FIDMAP pricing: a ${TRIAL_DAYS}-day free trial, then Startup or Business billed monthly or yearly. Every plan includes evidence-based priority scores, decision briefs, surveys and duplicate review.`}
       path="/pricing"
     />
 
@@ -24,6 +25,7 @@ const Pricing = () => (
     </section>
 
     <MarketingPricing />
+    <PlanGuide />
   </MarketingLayout>
 );
 

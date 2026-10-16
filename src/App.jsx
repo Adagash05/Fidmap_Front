@@ -37,8 +37,20 @@ import FeedbackBoard from "./pages/Product/FeedbackBoard.jsx";
 import Alternatives from "./pages/Alternatives/Alternatives.jsx";
 import CannyAlternative from "./pages/Alternatives/CannyAlternative.jsx";
 import FrillAlternative from "./pages/Alternatives/FrillAlternative.jsx";
+import UserVoiceAlternative from "./pages/Alternatives/UserVoiceAlternative.jsx";
+import ProductboardAlternative from "./pages/Alternatives/ProductboardAlternative.jsx";
+import HowItWorks from "./pages/HowItWorks.jsx";
 import Blog from "./pages/Blog/Blog.jsx";
 import BlogPost from "./pages/Blog/BlogPost.jsx";
+import Priorities from "./pages/Decisions/Priorities.jsx";
+import DecisionBrief from "./pages/Decisions/DecisionBrief.jsx";
+import Duplicates from "./pages/Decisions/Duplicates.jsx";
+import Insights from "./pages/Insights/Insights.jsx";
+import Surveys from "./pages/Surveys/Surveys.jsx";
+import PublicSurvey from "./pages/Surveys/PublicSurvey.jsx";
+import Unsubscribe from "./pages/Unsubscribe.jsx";
+import AcceptTeamInvite from "./pages/AcceptTeamInvite.jsx";
+import PlatformWorkspaces from "./pages/Admin/PlatformWorkspaces.jsx";
 import { initGA, trackPageView } from "./utils/analytics.js";
 import { captureReferralCode } from "./utils/referral.js";
 
@@ -129,6 +141,8 @@ export default function App() {
           element={<Navigate to={`/p/${subdomainSlug}`} replace />}
         />
         <Route path="/board/:boardId" element={<Board />} />
+        <Route path="/survey/:surveyId" element={<PublicSurvey />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/p/:workspaceSlug" element={<PublicPortal />} />
         <Route path="/p/:workspaceSlug/roadmap" element={<PortalRoadmap />} />
         <Route
@@ -170,7 +184,18 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
 
+        {/* Public, token- or link-based (no sign-in) */}
+        <Route path="/survey/:surveyId" element={<PublicSurvey />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="/accept-invite" element={<AcceptTeamInvite />} />
+
         <Route element={<ProtectedRoute />}>
+          <Route path="/priorities" element={<Priorities />} />
+          <Route path="/priorities/:feedbackId" element={<DecisionBrief />} />
+          <Route path="/duplicates" element={<Duplicates />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/surveys" element={<Surveys />} />
+          <Route path="/admin/workspaces" element={<PlatformWorkspaces />} />
           <Route path="/dashboard" element={<StaffDashboard />} />
           <Route path="/boards" element={<Boards />} />
           {/* PUBLIC INDIVIDUAL BOARD */}
@@ -209,6 +234,7 @@ export default function App() {
 
       {/* SEO / content pages */}
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/exclusive-deal" element={<ExclusiveDeal />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
@@ -222,6 +248,11 @@ export default function App() {
       <Route path="/alternatives" element={<Alternatives />} />
       <Route path="/alternatives/canny" element={<CannyAlternative />} />
       <Route path="/alternatives/frill" element={<FrillAlternative />} />
+      <Route path="/alternatives/uservoice" element={<UserVoiceAlternative />} />
+      <Route
+        path="/alternatives/productboard"
+        element={<ProductboardAlternative />}
+      />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
 
@@ -232,6 +263,11 @@ export default function App() {
 
       {/* Public board */}
       <Route path="/board/:boardId" element={<Board />} />
+
+      {/* Public, token- or link-based (no sign-in) */}
+      <Route path="/survey/:surveyId" element={<PublicSurvey />} />
+      <Route path="/unsubscribe" element={<Unsubscribe />} />
+      <Route path="/accept-invite" element={<AcceptTeamInvite />} />
 
       {/* Legal pages */}
       <Route path="/terms" element={<TermsOfService />} />

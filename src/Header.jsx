@@ -57,12 +57,16 @@ const Header = () => {
     ? [
         ["/dashboard", "Dashboard"],
         ["/boards", "Boards"],
+        ["/priorities", "Priorities"],
         ["/roadmap", "Roadmap"],
         ["/changelog", "Changelog"],
         // SUPER_ADMIN is a real platform role (Role.java), distinct from a
         // workspace OWNER — see ReferralPartners.jsx's own file banner.
         ...(currentUser?.role === "SUPER_ADMIN"
-          ? [["/admin/referrals", "Partners"]]
+          ? [
+              ["/admin/referrals", "Partners"],
+              ["/admin/workspaces", "Workspaces"],
+            ]
           : []),
       ]
     : [];
@@ -87,7 +91,14 @@ const Header = () => {
         {!isPortal && tabs.length > 0 && (
           <nav className="fm-tabs" role="tablist" aria-label="Workspace">
             {tabs.map(([path, label]) => {
-              const active = location.pathname === path;
+              const active =
+                location.pathname === path ||
+                (path === "/priorities" &&
+                  ["/duplicates", "/insights", "/surveys"].some((p) =>
+                    location.pathname.startsWith(p),
+                  )) ||
+                (path === "/priorities" &&
+                  location.pathname.startsWith("/priorities/"));
 
               return (
                 <Link to={path} key={path}>

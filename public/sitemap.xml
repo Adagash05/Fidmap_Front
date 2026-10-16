@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://fidmap.co/</loc></url>
   <url><loc>https://fidmap.co/pricing</loc></url>
+  <url><loc>https://fidmap.co/how-it-works</loc></url>
   <url><loc>https://fidmap.co/about</loc></url>
   <url><loc>https://fidmap.co/contact</loc></url>
   <url><loc>https://fidmap.co/resources</loc></url>
@@ -11,6 +12,8 @@
   <url><loc>https://fidmap.co/alternatives</loc></url>
   <url><loc>https://fidmap.co/alternatives/canny</loc></url>
   <url><loc>https://fidmap.co/alternatives/frill</loc></url>
+  <url><loc>https://fidmap.co/alternatives/uservoice</loc></url>
+  <url><loc>https://fidmap.co/alternatives/productboard</loc></url>
   <url><loc>https://fidmap.co/blog</loc></url>
   <url><loc>https://fidmap.co/blog/what-is-customer-feedback-management</loc></url>
   <url><loc>https://fidmap.co/blog/how-to-prioritize-feature-requests</loc></url>

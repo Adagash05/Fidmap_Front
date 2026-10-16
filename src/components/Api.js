@@ -19,6 +19,10 @@ export function setToken(token) {
 
 async function request(path, { method = "GET", body, auth = false } = {}) {
   const headers = { "Content-Type": "application/json" };
+  // auth: true      -> attach the staff token (required endpoints)
+  // auth: "optional" -> attach it when present, so staff can read private
+  //                    boards/drafts on endpoints that are also public.
+  //                    The backend treats a bad/expired token as anonymous.
   if (auth) {
     const token = getToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -67,6 +71,8 @@ export class ApiError extends Error {
   constructor(message, status) {
     super(message);
     this.status = status;
+    // 402 = the workspace has no active trial/subscription (backend-enforced).
+    this.subscriptionRequired = status === 402;
   }
 }
 
@@ -355,7 +361,7 @@ export const boards = {
     request(`/board/public/workspace/${workspaceId}`),
 
   // Get one board.
-  get: (boardId) => request(`/board/${boardId}`),
+  get: (boardId) => request(`/board/${boardId}`, { auth: "optional" }),
 
   // Create a board inside a workspace.
   create: (workspaceId, data) =>
@@ -392,10 +398,20 @@ export const boards = {
 /* -------------------------------- feedback ----------------------------------- */
 
 export const feedback = {
-  list: (boardId) => request(`/feedback/board/${boardId}`),
+  list: (boardId) =>
+    request(`/feedback/board/${boardId}`, { auth: "optional" }),
+
+  // Paginated + searchable: { items, page, size, totalElements, totalPages, hasNext }
+  page: (boardId, { page = 0, size = 25, q = "" } = {}) =>
+    request(
+      `/feedback/board/${boardId}/page?page=${page}&size=${size}${q ? `&q=${encodeURIComponent(q)}` : ""}`,
+      { auth: "optional" },
+    ),
 
   get: (feedbackId, boardId) =>
-    request(`/feedback/board/${boardId}/feedback/${feedbackId}`),
+    request(`/feedback/board/${boardId}/feedback/${feedbackId}`, {
+      auth: "optional",
+    }),
 
   create: ({ title, description, name, email }, boardId) =>
     request(`/feedback/board/${boardId}`, {
@@ -426,7 +442,8 @@ export const feedback = {
 /* --------------------------------- comments ----------------------------------- */
 
 export const comments = {
-  list: (feedbackId) => request(`/comment/${feedbackId}`),
+  list: (feedbackId) =>
+    request(`/comment/${feedbackId}`, { auth: "optional" }),
 
   create: (feedbackId, { message, name, email }) =>
     request(`/comment/${feedbackId}`, {
@@ -485,7 +502,11 @@ export const roadmap = {
 
 export const roadmapItems = {
   // roadmapId is the Roadmap's own id (roadmap.get().id), not the workspace id.
-  create: (roadmapId, { title, description, status, feedbackPostIds = [] }) =>
+  // targetDate is a plain calendar date ("yyyy-MM-dd") or null/omitted.
+  create: (
+    roadmapId,
+    { title, description, status, targetDate, feedbackPostIds = [] },
+  ) =>
     request(`/roadmap/item/${roadmapId}`, {
       method: "POST",
       auth: true,
@@ -493,7 +514,8 @@ export const roadmapItems = {
         title,
         description,
         status,
-        feedbackPost: feedbackPostIds.map((id) => ({ id })),
+        targetDate: targetDate || null,
+        feedbackPostIds,
       },
     }),
 
@@ -526,9 +548,10 @@ export const roadmapItems = {
 
 export const changelog = {
   list: (workspaceId = WORKSPACE_ID) =>
-    request(`/workspaces/${workspaceId}/changelogs`),
+    request(`/workspaces/${workspaceId}/changelogs`, { auth: "optional" }),
 
-  get: (changelogId) => request(`/workspaces/changelog/${changelogId}`),
+  get: (changelogId) =>
+    request(`/workspaces/changelog/${changelogId}`, { auth: "optional" }),
 
   // ChangeLogRequest: { title, content, status, publishedAt, userId }.
   create: (workspaceId, { title, content, status, publishedAt, userId }) =>
@@ -638,4 +661,222 @@ export const billing = {
       method: "POST",
       auth: true,
     }),
+};
+
+/* ------------------------------- decisions -------------------------------------- */
+// Evidence-backed prioritisation. Scores are computed server-side by a
+// versioned, deterministic engine; the response explains every component.
+
+export const decisions = {
+  // Paged: { items: [{ feedbackId, title, boardName, status, supporters,
+  //   surveyResponses, result: { score, scoreLow, scoreHigh, confidence,
+  //   recommendation, reason, components[], missingEvidence[] }, effort,
+  //   decidedAction, roadmapItemId }], page, size, totalElements, totalPages, hasNext }
+  priorities: (
+    workspaceId,
+    { page = 0, size = 25, includeClosed = false, sort = "score" } = {},
+  ) =>
+    request(
+      `/api/decisions/workspace/${workspaceId}/priorities?page=${page}&size=${size}&includeClosed=${includeClosed}&sort=${sort}`,
+      { auth: true },
+    ),
+
+  brief: (feedbackId) =>
+    request(`/api/decisions/feedback/${feedbackId}/brief`, { auth: true }),
+
+  // { urgency, strategic, effort } each 1-5 or null
+  saveInputs: (feedbackId, inputs) =>
+    request(`/api/decisions/feedback/${feedbackId}/inputs`, {
+      method: "PUT",
+      auth: true,
+      body: inputs,
+    }),
+
+  // { action, rationale, roadmapItemId? | newRoadmapItem?: { title, description, targetDate } }
+  decide: (feedbackId, body) =>
+    request(`/api/decisions/feedback/${feedbackId}/decide`, {
+      method: "POST",
+      auth: true,
+      body,
+    }),
+};
+
+/* ------------------------------- duplicates ------------------------------------- */
+
+export const duplicates = {
+  scan: (workspaceId) =>
+    request(`/api/duplicates/workspace/${workspaceId}/scan`, {
+      method: "POST",
+      auth: true,
+    }),
+
+  list: (workspaceId, { page = 0, size = 25 } = {}) =>
+    request(
+      `/api/duplicates/workspace/${workspaceId}?page=${page}&size=${size}`,
+      { auth: true },
+    ),
+
+  // keepPostId optional: which request survives (default = suggested target)
+  confirm: (suggestionId, keepPostId) =>
+    request(`/api/duplicates/${suggestionId}/confirm`, {
+      method: "POST",
+      auth: true,
+      body: keepPostId ? { keepPostId } : {},
+    }),
+
+  dismiss: (suggestionId) =>
+    request(`/api/duplicates/${suggestionId}/dismiss`, {
+      method: "POST",
+      auth: true,
+    }),
+};
+
+/* -------------------------------- insights -------------------------------------- */
+
+export const insights = {
+  get: (workspaceId) =>
+    request(`/api/insights/workspace/${workspaceId}`, { auth: true }),
+};
+
+/* ------------------------------- notifications ---------------------------------- */
+
+export const notifications = {
+  log: (workspaceId, { page = 0, size = 25 } = {}) =>
+    request(
+      `/api/notifications/workspace/${workspaceId}?page=${page}&size=${size}`,
+      { auth: true },
+    ),
+
+  retry: (id) =>
+    request(`/api/notifications/${id}/retry`, { method: "POST", auth: true }),
+
+  // Public, token-based (link in every notification email).
+  unsubscribe: (token) =>
+    request(`/api/public/notifications/unsubscribe`, {
+      method: "POST",
+      body: { token },
+    }),
+};
+
+/* -------------------------------- invitations ------------------------------------ */
+
+export const invitations = {
+  list: (workspaceId) =>
+    request(`/api/invitations/workspace/${workspaceId}`, { auth: true }),
+
+  // role: "MEMBER" | "ADMIN" (ADMIN invites are owner-only server-side)
+  create: (workspaceId, { email, role }) =>
+    request(`/api/invitations/workspace/${workspaceId}`, {
+      method: "POST",
+      auth: true,
+      body: { email, role },
+    }),
+
+  resend: (id) =>
+    request(`/api/invitations/${id}/resend`, { method: "POST", auth: true }),
+
+  revoke: (id) =>
+    request(`/api/invitations/${id}`, { method: "DELETE", auth: true }),
+
+  // Public (holder of the emailed token)
+  preview: (token) =>
+    request(`/api/public/invitations/preview`, {
+      method: "POST",
+      body: { token },
+    }),
+
+  accept: ({ token, fullName, password }) =>
+    request(`/api/public/invitations/accept`, {
+      method: "POST",
+      body: { token, fullName, password },
+    }),
+};
+
+/* --------------------------------- surveys --------------------------------------- */
+
+export const surveys = {
+  list: (workspaceId) =>
+    request(`/api/workspaces/${workspaceId}/surveys`, { auth: true }),
+
+  // { title, description, linkedFeedbackPostId, questions: [{ question, type,
+  //   position, options[], required }] }  type: TEXT|SINGLE_CHOICE|MULTIPLE_CHOICE|RATING
+  create: (workspaceId, body) =>
+    request(`/api/workspaces/${workspaceId}/surveys`, {
+      method: "POST",
+      auth: true,
+      body,
+    }),
+
+  get: (surveyId) => request(`/api/surveys/${surveyId}`, { auth: true }),
+
+  update: (surveyId, { title, description, linkedFeedbackPostId }) =>
+    request(`/api/surveys/${surveyId}`, {
+      method: "PUT",
+      auth: true,
+      body: { title, description, linkedFeedbackPostId: linkedFeedbackPostId || null },
+    }),
+
+  publish: (surveyId) =>
+    request(`/api/surveys/${surveyId}/publish`, { method: "PATCH", auth: true }),
+
+  close: (surveyId) =>
+    request(`/api/surveys/${surveyId}/close`, { method: "PATCH", auth: true }),
+
+  remove: (surveyId) =>
+    request(`/api/surveys/${surveyId}`, { method: "DELETE", auth: true }),
+
+  addQuestion: (surveyId, body) =>
+    request(`/api/surveys/${surveyId}/questions`, {
+      method: "POST",
+      auth: true,
+      body,
+    }),
+
+  updateQuestion: (questionId, body) =>
+    request(`/api/survey-questions/${questionId}`, {
+      method: "PUT",
+      auth: true,
+      body,
+    }),
+
+  removeQuestion: (questionId) =>
+    request(`/api/survey-questions/${questionId}`, {
+      method: "DELETE",
+      auth: true,
+    }),
+
+  results: (surveyId) =>
+    request(`/api/surveys/${surveyId}/results`, { auth: true }),
+
+  responses: (surveyId, { page = 0, size = 25 } = {}) =>
+    request(`/api/surveys/${surveyId}/responses?page=${page}&size=${size}`, {
+      auth: true,
+    }),
+
+  // Public (no staff token): only PUBLISHED surveys are returned.
+  getPublic: (surveyId) => request(`/api/public/surveys/${surveyId}`),
+
+  // respondent: { name, email }; answers: [{ questionId, answer?, answers? }]
+  submit: (surveyId, { respondent, answers }) =>
+    request(`/api/public/surveys/${surveyId}/responses`, {
+      method: "POST",
+      body: { respondent, answers },
+    }),
+};
+
+/* ---------------------------------- admin ---------------------------------------- */
+// SUPER_ADMIN only (enforced server-side).
+
+export const platformAdmin = {
+  workspaces: ({ q = "", page = 0, size = 25 } = {}) =>
+    request(
+      `/api/admin/workspaces?page=${page}&size=${size}${q ? `&q=${encodeURIComponent(q)}` : ""}`,
+      { auth: true },
+    ),
+
+  audit: ({ workspaceId, page = 0, size = 25 } = {}) =>
+    request(
+      `/api/admin/audit?page=${page}&size=${size}${workspaceId ? `&workspaceId=${workspaceId}` : ""}`,
+      { auth: true },
+    ),
 };

@@ -178,3 +178,7 @@ Covered above as Outstanding #2 (self-service profile edit) and #1
 (billing authorization) — both found while implementing the Profile and
 Subscription frontend work this session, not carried over from a prior
 audit.
+
+---
+## Update 2026-10 — contract added by this release (UNVERIFIED: not run against a live backend)
+The frontend now calls these backend routes (see `src/components/Api.js`): `/api/decisions/...` (priorities, brief, inputs, decide), `/api/duplicates/...`, `/api/insights/workspace/{id}`, `/api/notifications/...` and public `POST /api/public/notifications/unsubscribe`, `/api/invitations/...` and public `/api/public/invitations/{preview,accept}`, public survey routes, `/api/admin/workspaces` and `/api/admin/audit` (SUPER_ADMIN). Subscription-expired calls return HTTP 402, surfaced as `ApiError.subscriptionRequired`. See `docs/` for details.
