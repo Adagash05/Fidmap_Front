@@ -50,11 +50,7 @@ const FrillAlternative = () => (
         "Similar-idea detection and smart merge",
       ],
       ["Seats", "Capped per plan", "Unlimited teammates listed"],
-      [
-        "Free trial",
-        "7 days, 14 days, no credit card",
-        "14 days, no credit card",
-      ],
+      ["Free trial", "7 days, no credit card", "14 days, no credit card"],
     ]}
     fidmapStrengths={[
       "Every score explains itself and shows how uncertain it is when evidence is missing, and the final human decision is recorded next to it.",
