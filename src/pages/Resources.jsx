@@ -20,6 +20,9 @@ const Resources = () => (
       <h2>Guides</h2>
       <ul>
         <li>
+          <Link to="/help">Help center — how every part of FIDMAP works</Link>
+        </li>
+        <li>
           <Link to="/blog">Blog — feedback &amp; roadmap guides</Link>
         </li>
       </ul>

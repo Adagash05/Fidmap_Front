@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
  * reads `location.state.tab` to land directly on it.
  */
 const PlanLimitNotice = ({ message, showUpgrade = true }) => (
-  <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6 }}>
+  <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 6, marginBottom: 12 }}>
     {message}
     {showUpgrade && (
       <>

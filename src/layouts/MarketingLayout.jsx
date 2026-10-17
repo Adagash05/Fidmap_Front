@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { APP_URL } from "../constants/pricing";
+import ResourcesMenu from "../components/ResourcesMenu";
 
 /*
  * Shared marketing-site chrome (header nav + footer), used by every public
@@ -29,10 +30,8 @@ const MarketingLayout = ({ children }) => (
 
       <nav className="fm-mkt-nav-links">
         <Link to="/customer-feedback">Product</Link>
-        <Link to="/how-it-works">How it works</Link>
+        <ResourcesMenu />
         <Link to="/pricing">Pricing</Link>
-        <Link to="/blog">Blog</Link>
-        <Link to="/alternatives">Compare</Link>
         <a href={`${APP_URL}/sign-in`}>Sign in</a>
         <a href={`${APP_URL}/register`} className="fm-btn-primary">
           Start your free trial
@@ -55,6 +54,7 @@ const MarketingLayout = ({ children }) => (
 
         <div>
           <div className="fm-mkt-footer-heading fm-mono">Support</div>
+          <Link to="/help">Help center</Link>
           <Link to="/resources">Resources</Link>
           <Link to="/contact">Contact Us</Link>
           <Link to="/about">About</Link>
@@ -64,7 +64,7 @@ const MarketingLayout = ({ children }) => (
           <div className="fm-mkt-footer-heading fm-mono">Switch</div>
           <Link to="/alternatives/canny">Canny Alternative</Link>
           <Link to="/alternatives/frill">Frill Alternative</Link>
-          <Link to="/alternatives/productboard">Prouctboard Alternative</Link>
+          <Link to="/alternatives/productboard">Productboard Alternative</Link>
           <Link to="/alternatives/uservoice">UserVoice Alternative</Link>
         </div>
 

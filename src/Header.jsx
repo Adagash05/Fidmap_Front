@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { LogIn, LogOut, Settings as SettingsIcon } from "lucide-react";
 
 import LoginModal from "./components/LoginModal";
+import SubscriptionBanner from "./components/SubscriptionBanner";
 import { boards as boardsApi } from "./components/Api.js";
 import { useAuth } from "./hooks/useAuth";
 
@@ -143,6 +144,8 @@ const Header = () => {
           )}
         </div>
       </header>
+
+      {!isPortal && <SubscriptionBanner />}
 
       {showLogin && (
         <LoginModal

@@ -110,6 +110,9 @@ const Priorities = () => {
                   <th>Surveys</th>
                   <th>Effort</th>
                   <th>Decision</th>
+                  <th>
+                    <span className="fm-sr-only">Details</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

@@ -81,6 +81,13 @@ export function limitReachedMessage(limit, resourceLabel) {
   return `Your current plan allows a maximum of ${limit} ${resourceLabel}.`;
 }
 
+// Survey capacity from the backend entitlements (maxSurveys: null = unlimited).
+export function surveyLimitMessage(entitlements) {
+  const limit = entitlements?.maxSurveys;
+  const plan = entitlements?.planName ?? "current";
+  return `Survey limit reached. Your ${plan} plan allows ${limit} ${limit === 1 ? "survey" : "surveys"}.`;
+}
+
 export function isStartupTier(entitlements) {
   return planKeyFromBillingPlan(entitlements?.billingPlan) === "STARTUP";
 }

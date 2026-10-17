@@ -30,7 +30,7 @@ const TeamInvitations = ({ workspaceId, isOwner }) => {
       setNotice(
         created.emailSent
           ? `Invitation sent to ${created.email}.`
-          : `Invitation created, but the email could not be sent. Use “Resend” to try again.`,
+          : `Invitation created, but the email was NOT delivered${created.emailError ? ` (${created.emailError})` : ""}. Fix the email setup or use “Resend” to try again.`,
       );
       setEmail("");
       reload();
@@ -97,7 +97,7 @@ const TeamInvitations = ({ workspaceId, isOwner }) => {
                   <td>
                     {i.status === "PENDING" && (
                       <>
-                        <button type="button" className="fm-btn-ghost" onClick={() => act(() => invitationsApi.resend(i.id), (r) => (r.emailSent ? "Invitation re-sent." : "Could not send the email; try again later."))}>
+                        <button type="button" className="fm-btn-ghost" onClick={() => act(() => invitationsApi.resend(i.id), (r) => (r.emailSent ? "Invitation re-sent." : `The email was not delivered${r.emailError ? ` (${r.emailError})` : ""}.`))}>
                           Resend
                         </button>
                         <button type="button" className="fm-btn-ghost" onClick={() => act(() => invitationsApi.revoke(i.id), "Invitation revoked.")}>

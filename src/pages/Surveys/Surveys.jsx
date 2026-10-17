@@ -8,7 +8,9 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import { surveys as surveysApi } from "../../components/Api";
 import { useAuth } from "../../hooks/useAuth";
 import { useAsync } from "../../hooks/useAsync";
+import PlanLimitNotice from "../../components/PlanLimitNotice";
 import { SubNav } from "../Decisions/decisionUi";
+import { useEntitlements, isAtLimit, isStartupTier, formatUsage, surveyLimitMessage } from "../../hooks/useEntitlements";
 import SurveyBuilderModal from "./SurveyBuilderModal";
 import SurveyResults from "./SurveyResults";
 
@@ -53,6 +55,12 @@ const Surveys = () => {
 
   const items = data || [];
 
+  const { entitlements } = useEntitlements(workspaceId);
+  const limit = entitlements?.maxSurveys;
+  // The backend decides; this only mirrors it so the button explains itself.
+  const atLimit = Boolean(data) && isAtLimit(items.length, limit);
+  const lapsed = entitlements?.accessActive === false;
+
   return (
     <>
       <Header />
@@ -62,13 +70,31 @@ const Surveys = () => {
           <h1 className="fm-display">Surveys</h1>
           <p className="fm-x-lede">Ask customers directly, then link the answers to a request as evidence.</p>
         </div>
-        <button type="button" className="fm-btn-primary" onClick={() => setShowCreate(true)} disabled={!workspaceId}>
-          <Plus size={14} /> New survey
-        </button>
+        <div style={{ textAlign: "right" }}>
+          <button
+            type="button"
+            className="fm-btn-primary"
+            onClick={() => setShowCreate(true)}
+            disabled={!workspaceId || atLimit || lapsed}
+          >
+            <Plus size={14} /> New survey
+          </button>
+          {entitlements && data && (
+            <div className="fm-x-lede" style={{ marginTop: 6 }}>
+              Surveys {formatUsage(items.length, limit)} used
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="fm-x-wrap">
         <SubNav active="surveys" />
+        {atLimit && (
+          <PlanLimitNotice message={surveyLimitMessage(entitlements)} showUpgrade={isStartupTier(entitlements)} />
+        )}
+        {lapsed && !atLimit && (
+          <PlanLimitNotice message="Your subscription has expired, so new surveys can't be created until you renew." showUpgrade={false} />
+        )}
         <ErrorBanner error={error || actionError} onRetry={reload} />
         {loading && !data && <div className="fm-loading">Loading surveys…</div>}
 

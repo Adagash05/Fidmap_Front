@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -14,10 +13,11 @@ import {
   Sparkles,
   ThumbsUp,
   Users,
-  X,
 } from "lucide-react";
 
 import MarketingPricing from "../components/MarketingPricing";
+import ResourcesMenu from "../components/ResourcesMenu";
+import ProductPreview from "../components/ProductPreview";
 import Seo, { SITE_URL } from "../components/Seo";
 import { withReferralParam } from "../utils/referral";
 
@@ -37,84 +37,7 @@ const jsonLd = [
   },
 ];
 
-const demoFeedback = [
-  {
-    id: 1,
-    votes: 124,
-    title: "Dark mode",
-    description: "Give users the option to switch between light and dark mode.",
-    status: "Planned",
-    statusClass: "planned",
-    category: "Improvement",
-  },
-  {
-    id: 2,
-    votes: 87,
-    title: "Slack integration",
-    description: "Get notifications when customers submit new feedback.",
-    status: "In progress",
-    statusClass: "progress",
-    category: "Integration",
-  },
-  {
-    id: 3,
-    votes: 64,
-    title: "Mobile application",
-    description: "Access FIDMAP from iOS and Android devices.",
-    status: "Considering",
-    statusClass: "considering",
-    category: "Mobile",
-  },
-];
-
-const demoRoadmap = [
-  {
-    title: "Slack integration",
-    description: "Get notified about new customer feedback.",
-    status: "In progress",
-    statusClass: "progress",
-  },
-  {
-    title: "Dark mode",
-    description: "Give users a comfortable dark interface.",
-    status: "Planned",
-    statusClass: "planned",
-  },
-  {
-    title: "Mobile application",
-    description: "Take your feedback portal on the go.",
-    status: "Considering",
-    statusClass: "considering",
-  },
-];
-
-const demoUpdates = [
-  {
-    title: "Slack integration is coming",
-    date: "Sep 18, 2026",
-    description:
-      "You'll soon be able to receive FIDMAP feedback notifications directly in Slack.",
-  },
-  {
-    title: "Public roadmap improvements",
-    date: "Sep 12, 2026",
-    description: "Roadmaps are now easier for customers to browse and follow.",
-  },
-];
-
 const Marketing = () => {
-  const [demoTab, setDemoTab] = useState("feedback");
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [voted, setVoted] = useState([]);
-
-  const handleVote = (id) => {
-    setVoted((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
-    );
-  };
-
   return (
     <div className="fm-marketing">
       <Seo
@@ -135,7 +58,7 @@ const Marketing = () => {
 
         <nav className="fm-mkt-nav-links">
           <Link to="/customer-feedback">Product</Link>
-          <Link to="/blog">Blog</Link>
+          <ResourcesMenu />
           <Link to="/pricing">Pricing</Link>
           {/* <a href="#pricing">Pricing</a> */}
           <a href="https://app.fidmap.co/sign-in">Sign in</a>
@@ -208,255 +131,7 @@ const Marketing = () => {
             progress, and see what's coming next.
           </p>
 
-          <div className="fm-demo-window">
-            {/* DEMO HEADER */}
-            <div className="fm-demo-topbar">
-              <div className="fm-demo-brand">
-                <div className="fm-demo-logo">
-                  <img src="/logo.svg" alt="" />
-                </div>
-
-                <div>
-                  <strong>Acme Product</strong>
-                  <span>Customer feedback</span>
-                </div>
-              </div>
-
-              <div className="fm-demo-tabs">
-                <button
-                  className={demoTab === "feedback" ? "active" : ""}
-                  onClick={() => {
-                    setDemoTab("feedback");
-                    setSelectedFeedback(null);
-                  }}
-                >
-                  Feedback
-                </button>
-
-                <button
-                  className={demoTab === "roadmap" ? "active" : ""}
-                  onClick={() => {
-                    setDemoTab("roadmap");
-                    setSelectedFeedback(null);
-                  }}
-                >
-                  Roadmap
-                </button>
-
-                <button
-                  className={demoTab === "updates" ? "active" : ""}
-                  onClick={() => {
-                    setDemoTab("updates");
-                    setSelectedFeedback(null);
-                  }}
-                >
-                  Updates
-                </button>
-              </div>
-
-              <button className="fm-demo-submit">+ Submit feedback</button>
-            </div>
-
-            {/* DEMO CONTENT */}
-            <div className="fm-demo-body">
-              {demoTab === "feedback" && !selectedFeedback && (
-                <>
-                  <div className="fm-demo-heading">
-                    <div>
-                      <span className="fm-demo-kicker">Feedback</span>
-                      <h3>What should we build next?</h3>
-                    </div>
-
-                    <button className="fm-demo-filter">
-                      Popular
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <div className="fm-feedback-list">
-                    {demoFeedback.map((item) => {
-                      const hasVoted = voted.includes(item.id);
-
-                      return (
-                        <div
-                          className="fm-feedback-card"
-                          key={item.id}
-                          onClick={() => setSelectedFeedback(item)}
-                        >
-                          <button
-                            className={`fm-vote ${hasVoted ? "voted" : ""}`}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleVote(item.id);
-                            }}
-                          >
-                            <ThumbsUp size={14} />
-                            <strong>{item.votes + (hasVoted ? 1 : 0)}</strong>
-                          </button>
-
-                          <div className="fm-feedback-main">
-                            <h4>{item.title}</h4>
-
-                            <p>{item.description}</p>
-
-                            <div className="fm-feedback-meta">
-                              <span>{item.category}</span>
-                              <span className={`fm-status ${item.statusClass}`}>
-                                {item.status}
-                              </span>
-                            </div>
-                          </div>
-
-                          <ChevronRight
-                            size={18}
-                            className="fm-feedback-arrow"
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-
-              {demoTab === "feedback" && selectedFeedback && (
-                <div className="fm-demo-detail">
-                  <button
-                    className="fm-back-button"
-                    onClick={() => setSelectedFeedback(null)}
-                  >
-                    ← Back to feedback
-                  </button>
-
-                  <div className="fm-detail-layout">
-                    <div className="fm-detail-vote">
-                      <ThumbsUp size={18} />
-                      <strong>
-                        {selectedFeedback.votes +
-                          (voted.includes(selectedFeedback.id) ? 1 : 0)}
-                      </strong>
-
-                      <button
-                        className={
-                          voted.includes(selectedFeedback.id) ? "active" : ""
-                        }
-                        onClick={() => handleVote(selectedFeedback.id)}
-                      >
-                        {voted.includes(selectedFeedback.id) ? "Voted" : "Vote"}
-                      </button>
-                    </div>
-
-                    <div>
-                      <span className="fm-demo-kicker">
-                        {selectedFeedback.category}
-                      </span>
-
-                      <h3>{selectedFeedback.title}</h3>
-
-                      <p className="fm-detail-description">
-                        {selectedFeedback.description}
-                      </p>
-
-                      <div className="fm-detail-status">
-                        <span
-                          className={`fm-status ${selectedFeedback.statusClass}`}
-                        >
-                          {selectedFeedback.status}
-                        </span>
-                      </div>
-
-                      <div className="fm-demo-comment-box">
-                        <MessageSquare size={16} />
-                        <span>12 comments</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {demoTab === "roadmap" && (
-                <>
-                  <div className="fm-demo-heading">
-                    <div>
-                      <span className="fm-demo-kicker">Roadmap</span>
-                      <h3>Here's what we're building</h3>
-                    </div>
-                  </div>
-
-                  <div className="fm-roadmap-columns">
-                    <div className="fm-roadmap-column">
-                      <div className="fm-roadmap-column-title">
-                        <span className="fm-roadmap-dot considering" />
-                        Considering
-                      </div>
-
-                      {demoRoadmap
-                        .filter((item) => item.status === "Considering")
-                        .map((item) => (
-                          <DemoRoadmapCard key={item.title} item={item} />
-                        ))}
-                    </div>
-
-                    <div className="fm-roadmap-column">
-                      <div className="fm-roadmap-column-title">
-                        <span className="fm-roadmap-dot progress" />
-                        In progress
-                      </div>
-
-                      {demoRoadmap
-                        .filter((item) => item.status === "In progress")
-                        .map((item) => (
-                          <DemoRoadmapCard key={item.title} item={item} />
-                        ))}
-                    </div>
-
-                    <div className="fm-roadmap-column">
-                      <div className="fm-roadmap-column-title">
-                        <span className="fm-roadmap-dot planned" />
-                        Planned
-                      </div>
-
-                      {demoRoadmap
-                        .filter((item) => item.status === "Planned")
-                        .map((item) => (
-                          <DemoRoadmapCard key={item.title} item={item} />
-                        ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {demoTab === "updates" && (
-                <>
-                  <div className="fm-demo-heading">
-                    <div>
-                      <span className="fm-demo-kicker">Changelog</span>
-                      <h3>What's new</h3>
-                    </div>
-                  </div>
-
-                  <div className="fm-update-list">
-                    {demoUpdates.map((update) => (
-                      <article className="fm-update-card" key={update.title}>
-                        <div className="fm-update-icon">
-                          <Megaphone size={16} />
-                        </div>
-
-                        <div>
-                          <span>{update.date}</span>
-                          <h4>{update.title}</h4>
-                          <p>{update.description}</p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <p className="fm-demo-caption">
-            This is an interactive preview of FIDMAP — no signup required.
-          </p>
+          <ProductPreview />
         </section>
 
         {/* OPTIONAL VIDEO */}
@@ -751,6 +426,7 @@ const Marketing = () => {
 
           <div>
             <div className="fm-mkt-footer-heading fm-mono">Support</div>
+            <Link to="/help">Help center</Link>
             <Link to="/resources">Resources</Link>
             <Link to="/contact">Contact Us</Link>
             <Link to="/about">About</Link>
@@ -760,7 +436,9 @@ const Marketing = () => {
             <div className="fm-mkt-footer-heading fm-mono">Compare</div>
             <Link to="/alternatives/canny">Canny Alternative</Link>
             <Link to="/alternatives/frill">Frill Alternative</Link>
-            <Link to="/alternatives/productboard">Prouctboard Alternative</Link>
+            <Link to="/alternatives/productboard">
+              Productboard Alternative
+            </Link>
             <Link to="/alternatives/uservoice">UserVoice Alternative</Link>
           </div>
 

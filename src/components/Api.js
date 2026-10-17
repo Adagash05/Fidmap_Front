@@ -46,7 +46,7 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
     const message =
       (payload && (payload.message || payload?.data?.error)) ||
       `Request failed with status ${res.status}`;
-    throw new ApiError(message, res.status);
+    throw new ApiError(message, res.status, payload?.errorCode);
   }
 
   // Most endpoints wrap responses in { success, message, data }, but some
@@ -68,11 +68,14 @@ function safeJson(text) {
 }
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, code) {
     super(message);
     this.status = status;
+    this.code = code || null;
     // 402 = the workspace has no active trial/subscription (backend-enforced).
     this.subscriptionRequired = status === 402;
+    // 403 + PLAN_LIMIT = an expected plan limit (e.g. surveys), not a failure.
+    this.planLimit = this.code === "PLAN_LIMIT";
   }
 }
 
